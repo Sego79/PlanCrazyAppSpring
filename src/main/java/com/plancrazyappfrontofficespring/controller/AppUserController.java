@@ -20,7 +20,7 @@ public class AppUserController {
     @Autowired
     private AppUserService appUserService;
 
-    //CRUD : find all
+    //CRUD : find all app users
     @GetMapping("/app-user")
     public ResponseEntity<List<AppUserDto>> getAllAppUser() {
         List<AppUserDto> games = appUserService.fetchAppUser();
