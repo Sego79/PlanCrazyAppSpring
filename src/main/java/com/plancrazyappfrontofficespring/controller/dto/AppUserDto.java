@@ -24,33 +24,34 @@ public class AppUserDto {
 
     private String password;
 
-//    private Boolean isActive = true;
-//
-//    private Boolean isAdmin = false;
-//
-//    private Boolean isSuperAdmin = false;
-//
-//    private List<Picture> pictureList = new ArrayList<>();
-//
-//    private List<UserTaskAssociation> UserTaskAssociationList = new ArrayList<>();
 
-    public AppUserDto() {
+    public AppUserDto(AppUser g) {
+        this.setAppUserId(g.getAppUserId());
+        this.setNickname(g.getNickname());
+        this.setFirstName(g.getFirstName());
+        this.setLastName(g.getLastName());
+        this.setAddress(g.getAddress());
+        this.setPostcode(g.getPostcode());
+        this.setCity(g.getCity());
+        this.setPhoneNumber(g.getPhoneNumber());
+        this.setEmail(g.getEmail());
+        this.setPassword(g.getPassword());
     }
 
-    public static AppUserDto transformIntoDto(AppUser g) {
-        AppUserDto dto = new AppUserDto();
-        dto.setAppUserId(g.getAppUserId());
-        dto.setNickname(g.getNickname());
-        dto.setFirstName(g.getFirstName());
-        dto.setLastName(g.getLastName());
-        dto.setAddress(g.getAddress());
-        dto.setPostcode(g.getPostcode());
-        dto.setCity(g.getCity());
-        dto.setPhoneNumber(g.getPhoneNumber());
-        dto.setEmail(g.getEmail());
-        dto.setPassword(g.getPassword());
-        return dto;
-    }
+//    public static AppUserDto transformIntoDto(AppUser g) {
+//        AppUserDto dto = new AppUserDto();
+//        dto.setAppUserId(g.getAppUserId());
+//        dto.setNickname(g.getNickname());
+//        dto.setFirstName(g.getFirstName());
+//        dto.setLastName(g.getLastName());
+//        dto.setAddress(g.getAddress());
+//        dto.setPostcode(g.getPostcode());
+//        dto.setCity(g.getCity());
+//        dto.setPhoneNumber(g.getPhoneNumber());
+//        dto.setEmail(g.getEmail());
+//        dto.setPassword(g.getPassword());
+//        return dto;
+//    }
 
     public Long getAppUserId() {
         return appUserId;

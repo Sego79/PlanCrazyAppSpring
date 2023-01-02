@@ -18,16 +18,16 @@ public class AppUserService {
     private AppUserRepository appUserRepository;
 
     public List<AppUserDto> fetchAppUser() {
-        List<AppUser> appUserList = (List<AppUser>) appUserRepository.findAll();
+        List<AppUser> appUserList = appUserRepository.findAll();
         return appUserList.stream()
-                .map(g ->AppUserDto.transformIntoDto(g))
+                .map(g ->new AppUserDto(g))
                 .collect(Collectors.toList());
     }
 
     public AppUser fetchById(Long id) throws Exception {
             Optional<AppUser> appUserOpt = appUserRepository.findById(id);
             return appUserOpt.orElseThrow(() -> new Exception());
-        }
+    }
 
     public AppUserDto addAppUser(AppUserDto dto){
         AppUser appUser =  new AppUser(
@@ -46,7 +46,7 @@ public class AppUserService {
         appUser.setIsAdmin(false);
         appUser.setIsSuperAdmin(false);
         appUserRepository.save(appUser);
-        return AppUserDto.transformIntoDto(appUser);
+        return new AppUserDto(appUser);
     }
 
 
@@ -59,8 +59,10 @@ public class AppUserService {
         return appUserRepository.findById(id);
     }
 
-    public void save(AppUser updateAppUSer) {
-        appUserRepository.save(updateAppUSer);
+    public AppUserDto save(AppUser updateAppUSer) {
+        AppUser appUser = appUserRepository.save(updateAppUSer);
+        AppUserDto appUserDto = new AppUserDto(appUser);
+        return appUserDto;
     }
 
 

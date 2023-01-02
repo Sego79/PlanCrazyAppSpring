@@ -16,15 +16,14 @@ import java.util.Optional;
 @RequestMapping("/api")
 public class AppUserController {
 
-
     @Autowired
     private AppUserService appUserService;
 
     //CRUD : find all app users
     @GetMapping("/app-user")
     public ResponseEntity<List<AppUserDto>> getAllAppUser() {
-        List<AppUserDto> games = appUserService.fetchAppUser();
-        return ResponseEntity.status(HttpStatus.OK).body(games); //retourne en JSON dans le corps (body) les games
+        List<AppUserDto> appUserDtoList = appUserService.fetchAppUser();
+        return ResponseEntity.status(HttpStatus.OK).body(appUserDtoList); //retourne en JSON dans le corps (body) les games
     }
 
     //CRUD : find by id
