@@ -1,54 +1,43 @@
-package com.plancrazyappfrontofficespring.model;
+package com.plancrazyappfrontofficespring.controller.dto;
 
-import jakarta.persistence.*;
+import com.plancrazyappfrontofficespring.model.Task;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
 
-@Entity
-public class Task {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="task_id", nullable = false, unique = true)
+public class TaskDto {
+
     private Long taskId;
 
-    @Column(name="task_title", nullable = false)
     private String taskTitle;
 
-    @Column(nullable = false)
     private String description;
 
-    @Column(nullable = false)
     private String location;
 
-    @Column(name="starting_date", nullable = false)
     private LocalDate startingDate;
 
-    @Column(name="starting_hour", nullable = false)
     private LocalTime startingHour;
 
-    @Column(name="ending_date", nullable = false)
     private LocalDate endingDate;
 
-    @Column(name="ending_hour", nullable = false)
     private LocalTime endingHour;
 
-    @Column(name="is_Private", nullable = false)
     private Boolean isPrivate;
 
-    @OneToMany
-    private List<Category> categoryList = new ArrayList<>();
+    public TaskDto() {
+    }
 
-    @OneToMany
-    private List<ProgressStatus> progressStatusList = new ArrayList<>();
-
-    @OneToMany(mappedBy = "task")
-    private List<UserTaskAssociation> UserTaskAssociationList = new ArrayList<>();
-
-    public Task() {
-
+    public TaskDto(Task task) {
+        this.setTaskId(task.getTaskId());
+        this.setTaskTitle(task.getTaskTitle());
+        this.setDescription(task.getDescription());
+        this.setLocation(task.getLocation());
+        this.setStartingDate(task.getStartingDate());
+        this.setStartingHour(task.getStartingHour());
+        this.setEndingDate(task.getEndingDate());
+        this.setEndingHour(task.getEndingHour());
+        this.setPrivate(task.getPrivate());
     }
 
     public Long getTaskId() {
@@ -122,29 +111,4 @@ public class Task {
     public void setPrivate(Boolean aPrivate) {
         isPrivate = aPrivate;
     }
-
-    public List<Category> getCategoryList() {
-        return categoryList;
-    }
-
-    public void setCategoryList(List<Category> categoryList) {
-        this.categoryList = categoryList;
-    }
-
-    public List<ProgressStatus> getProgressStatusList() {
-        return progressStatusList;
-    }
-
-    public void setProgressStatusList(List<ProgressStatus> progressStatusList) {
-        this.progressStatusList = progressStatusList;
-    }
-
-    public List<UserTaskAssociation> getAssociationList() {
-        return UserTaskAssociationList;
-    }
-
-    public void setAssociationList(List<UserTaskAssociation> associationList) {
-        this.UserTaskAssociationList = associationList;
-    }
 }
-

@@ -27,17 +27,17 @@ public class AppUserDto {
     public AppUserDto() {
     }
 
-    public AppUserDto(AppUser g) {
-        this.setAppUserId(g.getAppUserId());
-        this.setNickname(g.getNickname());
-        this.setFirstName(g.getFirstName());
-        this.setLastName(g.getLastName());
-        this.setAddress(g.getAddress());
-        this.setPostcode(g.getPostcode());
-        this.setCity(g.getCity());
-        this.setPhoneNumber(g.getPhoneNumber());
-        this.setEmail(g.getEmail());
-        this.setPassword(g.getPassword());
+    public AppUserDto(AppUser appUser) {
+        this.setAppUserId(appUser.getAppUserId());
+        this.setNickname(appUser.getNickname());
+        this.setFirstName(appUser.getFirstName());
+        this.setLastName(appUser.getLastName());
+        this.setAddress(appUser.getAddress());
+        this.setPostcode(appUser.getPostcode());
+        this.setCity(appUser.getCity());
+        this.setPhoneNumber(appUser.getPhoneNumber());
+        this.setEmail(appUser.getEmail());
+        this.setPassword(appUser.getPassword());
     }
 
     public Long getAppUserId() {
