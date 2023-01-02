@@ -59,8 +59,10 @@ public class AppUserService {
         return appUserRepository.findById(id);
     }
 
-    public void save(AppUser updateAppUSer) {
-        appUserRepository.save(updateAppUSer);
+    public AppUserDto save(AppUser updateAppUSer) {
+        AppUser appUser = appUserRepository.save(updateAppUSer);
+        AppUserDto appUserDto = AppUserDto.transformIntoDto(appUser);
+        return appUserDto;
     }
 
 
