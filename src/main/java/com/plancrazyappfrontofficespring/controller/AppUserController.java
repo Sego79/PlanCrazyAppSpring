@@ -63,9 +63,8 @@ public class AppUserController {
             updateAppUser.setEmail(dto.getEmail());
             updateAppUser.setPassword(dto.getPassword());
 
-            appUserService.save(updateAppUser);
-//TODO : VERIFIER CE QUI EST REELLEMENT RENVOYE
-            return new ResponseEntity<>(dto, HttpStatus.OK);
+            AppUserDto returnedDto = appUserService.save(updateAppUser);
+            return new ResponseEntity<>(returnedDto, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
