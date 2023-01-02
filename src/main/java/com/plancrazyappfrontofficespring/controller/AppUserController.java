@@ -45,29 +45,11 @@ public class AppUserController {
     }
 
     //CRUD : update
-    @PutMapping("/app-user/{id}")
-    public ResponseEntity<AppUserDto> appUserToEdit(@PathVariable("id") long id,  @RequestBody AppUserDto dto) {
-        Optional<AppUser> optAppUser = appUserService.findById(id);
-        System.out.println(id);
-        System.out.println(optAppUser.get());
-        if (optAppUser.isPresent()) {
-            AppUser updateAppUser = optAppUser.get();
-            updateAppUser.setAppUserId(dto.getAppUserId());
-            updateAppUser.setNickname(dto.getNickname());
-            updateAppUser.setFirstName(dto.getFirstName());
-            updateAppUser.setLastName(dto.getLastName());
-            updateAppUser.setAddress(dto.getAddress());
-            updateAppUser.setPostcode(dto.getPostcode());
-            updateAppUser.setCity(dto.getCity());
-            updateAppUser.setPhoneNumber(dto.getPhoneNumber());
-            updateAppUser.setEmail(dto.getEmail());
-            updateAppUser.setPassword(dto.getPassword());
+    @PutMapping("/app-user")
+    public ResponseEntity<AppUserDto> appUserToEdit(@RequestBody AppUserDto appUserDto) throws Exception {
 
-            AppUserDto returnedDto = appUserService.save(updateAppUser);
-            return new ResponseEntity<>(returnedDto, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        AppUserDto returnedDto = appUserService.updateAppUser(appUserDto);
+        return new ResponseEntity<>(returnedDto, HttpStatus.OK);
     }
 
 

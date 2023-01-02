@@ -20,7 +20,7 @@ public class AppUserService {
     public List<AppUserDto> fetchAppUser() {
         List<AppUser> appUserList = appUserRepository.findAll();
         return appUserList.stream()
-                .map(g ->new AppUserDto(g))
+                .map(g -> new AppUserDto(g))
                 .collect(Collectors.toList());
     }
 
@@ -29,6 +29,7 @@ public class AppUserService {
             return appUserOpt.orElseThrow(() -> new Exception());
     }
 
+    @Transactional
     public AppUserDto addAppUser(AppUserDto dto){
         AppUser appUser =  new AppUser(
                 dto.getNickname(),
@@ -59,11 +60,28 @@ public class AppUserService {
         return appUserRepository.findById(id);
     }
 
-    public AppUserDto save(AppUser updateAppUSer) {
-        AppUser appUser = appUserRepository.save(updateAppUSer);
-        AppUserDto appUserDto = new AppUserDto(appUser);
-        return appUserDto;
+    @Transactional
+    public AppUserDto updateAppUser(AppUserDto appUserDto) throws Exception {
+
+        Optional<AppUser> appUserToUpdate = appUserRepository.findById(appUserDto.getAppUserId());
+
+        if( appUserToUpdate.isPresent()) {
+            AppUser updateAppUserTemp = appUserToUpdate.get();
+            updateAppUserTemp.setAppUserId(appUserDto.getAppUserId());
+            updateAppUserTemp.setNickname(appUserDto.getNickname());
+            updateAppUserTemp.setFirstName(appUserDto.getFirstName());
+            updateAppUserTemp.setLastName(appUserDto.getLastName());
+            updateAppUserTemp.setAddress(appUserDto.getAddress());
+            updateAppUserTemp.setPostcode(appUserDto.getPostcode());
+            updateAppUserTemp.setCity(appUserDto.getCity());
+            updateAppUserTemp.setPhoneNumber(appUserDto.getPhoneNumber());
+            updateAppUserTemp.setEmail(appUserDto.getEmail());
+            updateAppUserTemp.setPassword(appUserDto.getPassword());
+
+            AppUser appUser = appUserRepository.save(updateAppUserTemp);
+            return new AppUserDto(appUser);
+        } else {
+            throw new Exception();
+        }
     }
-
-
 }

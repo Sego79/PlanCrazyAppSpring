@@ -24,6 +24,8 @@ public class AppUserDto {
 
     private String password;
 
+    public AppUserDto() {
+    }
 
     public AppUserDto(AppUser g) {
         this.setAppUserId(g.getAppUserId());
@@ -37,21 +39,6 @@ public class AppUserDto {
         this.setEmail(g.getEmail());
         this.setPassword(g.getPassword());
     }
-
-//    public static AppUserDto transformIntoDto(AppUser g) {
-//        AppUserDto dto = new AppUserDto();
-//        dto.setAppUserId(g.getAppUserId());
-//        dto.setNickname(g.getNickname());
-//        dto.setFirstName(g.getFirstName());
-//        dto.setLastName(g.getLastName());
-//        dto.setAddress(g.getAddress());
-//        dto.setPostcode(g.getPostcode());
-//        dto.setCity(g.getCity());
-//        dto.setPhoneNumber(g.getPhoneNumber());
-//        dto.setEmail(g.getEmail());
-//        dto.setPassword(g.getPassword());
-//        return dto;
-//    }
 
     public Long getAppUserId() {
         return appUserId;
