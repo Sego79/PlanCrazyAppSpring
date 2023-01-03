@@ -23,7 +23,7 @@ public class AppUserController {
     @GetMapping("/app-user")
     public ResponseEntity<List<AppUserDto>> getAllAppUser() {
         List<AppUserDto> appUserDtoList = appUserService.fetchAppUser();
-        return ResponseEntity.status(HttpStatus.OK).body(appUserDtoList); //retourne en JSON dans le corps (body) les games
+        return ResponseEntity.status(HttpStatus.OK).body(appUserDtoList);
     }
 
     //CRUD : find by id
@@ -39,7 +39,7 @@ public class AppUserController {
 
     //CRUD : create
     @PostMapping("/app-user")
-    public ResponseEntity<AppUserDto> createGame(@RequestBody AppUserDto dto) {
+    public ResponseEntity<AppUserDto> createAppUser(@RequestBody AppUserDto dto) {
         AppUserDto newAppUserDto = appUserService.addAppUser(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(newAppUserDto);
     }

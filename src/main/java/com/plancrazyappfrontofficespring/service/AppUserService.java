@@ -50,22 +50,12 @@ public class AppUserService {
         return new AppUserDto(appUser);
     }
 
-
-    @Transactional
-    public void delete(Long id){
-        appUserRepository.deleteById(id);
-    }
-
-    public Optional<AppUser> findById(long id) {
-        return appUserRepository.findById(id);
-    }
-
     @Transactional
     public AppUserDto updateAppUser(AppUserDto appUserDto) throws Exception {
 
         Optional<AppUser> appUserToUpdate = appUserRepository.findById(appUserDto.getAppUserId());
 
-        if( appUserToUpdate.isPresent()) {
+        if(appUserToUpdate.isPresent()) {
             AppUser updateAppUserTemp = appUserToUpdate.get();
             updateAppUserTemp.setAppUserId(appUserDto.getAppUserId());
             updateAppUserTemp.setNickname(appUserDto.getNickname());
@@ -83,5 +73,10 @@ public class AppUserService {
         } else {
             throw new Exception();
         }
+    }
+
+    @Transactional
+    public void delete(Long id){
+        appUserRepository.deleteById(id);
     }
 }

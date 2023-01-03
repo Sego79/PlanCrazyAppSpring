@@ -51,6 +51,17 @@ public class Task {
 
     }
 
+    public Task(String taskTitle, String description, String location, LocalDate startingDate, LocalTime startingHour, LocalDate endingDate, LocalTime endingHour, Boolean isPrivate) {
+        this.taskTitle = taskTitle;
+        this.description = description;
+        this.location = location;
+        this.startingDate = startingDate;
+        this.startingHour = startingHour;
+        this.endingDate = endingDate;
+        this.endingHour = endingHour;
+        this.isPrivate = isPrivate;
+    }
+
     public Long getTaskId() {
         return taskId;
     }
