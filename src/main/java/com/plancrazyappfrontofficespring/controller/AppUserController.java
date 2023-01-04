@@ -30,13 +30,17 @@ public class AppUserController {
         return new ResponseEntity<>(connectedUser, HttpStatus.OK);
     }
 
+    //CRUD : modify the connected user, excluding the unique fields
+    // todo : check if all unique fields are well protected
     @PutMapping("/app-user")
     public ResponseEntity<AppUserDto> appUserEdit(@RequestHeader(HttpHeaders.AUTHORIZATION) String headerAuth, @RequestBody AppUserDto appUserDto) throws Exception {
         String email = jwtUtils.getEmailFromToken(jwtUtils.parseStringHeaderAuthorization(headerAuth));
-        appUserDto.setEmail(email);
-        AppUserDto returnedDto = appUserService.updateAppUser(appUserDto); // TODO : disable password modification !
-        // en l'occurrence ici le changement de mot de passe ne change pas le token de connexion, changer de mdp devrait
-        // être une autre requête !
+        AppUserDto connectedUser = new AppUserDto(appUserService.fetchByEmail(email));
+        appUserDto.setEmail(connectedUser.getEmail());
+        appUserDto.setAppUserId(connectedUser.getAppUserId());
+        appUserDto.setPassword(connectedUser.getPassword());
+        appUserDto.setPhoneNumber(connectedUser.getPhoneNumber());
+        AppUserDto returnedDto = appUserService.updateAppUser(appUserDto);
         return new ResponseEntity<>(returnedDto, HttpStatus.OK);
     }
 

@@ -88,7 +88,7 @@ public class AppUserService {
             updateAppUserTemp.setCity(appUserDto.getCity());
             updateAppUserTemp.setPhoneNumber(appUserDto.getPhoneNumber());
             updateAppUserTemp.setEmail(appUserDto.getEmail());
-            updateAppUserTemp.setPassword(encoder.encode(appUserDto.getPassword()));
+            updateAppUserTemp.setPassword(appUserDto.getPassword());
 
             AppUser appUser = appUserRepository.save(updateAppUserTemp);
             return new AppUserDto(appUser);
