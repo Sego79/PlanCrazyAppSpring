@@ -49,7 +49,7 @@ public class AuthRestController {
             String generatedToken = jwtUtils.generateJwt(authentication);
             AppUser connectedUser = (AppUser) authentication.getPrincipal();
 
-            return ResponseEntity.ok(new JwtResponse(connectedUser.getEmail(), generatedToken));
+            return ResponseEntity.ok(new JwtResponse(connectedUser.getAppUserId().toString(), generatedToken));
 
         } catch (DisabledException e) {
             throw new Exception("USER_DISABLED", e);
