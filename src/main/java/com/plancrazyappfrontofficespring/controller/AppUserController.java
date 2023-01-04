@@ -1,6 +1,7 @@
 package com.plancrazyappfrontofficespring.controller;
 
 import com.plancrazyappfrontofficespring.controller.dto.AppUserDto;
+import com.plancrazyappfrontofficespring.exception.UserAlreadyExistException;
 import com.plancrazyappfrontofficespring.model.AppUser;
 import com.plancrazyappfrontofficespring.service.AppUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,10 +39,14 @@ public class AppUserController {
     }
 
     //CRUD : create
-    @PostMapping("/app-user")
+    @PostMapping("/signup")
     public ResponseEntity<AppUserDto> createAppUser(@RequestBody AppUserDto dto) {
-        AppUserDto newAppUserDto = appUserService.addAppUser(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(newAppUserDto);
+        try {
+            AppUserDto newAppUserDto = appUserService.addAppUser(dto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(newAppUserDto);
+        } catch (UserAlreadyExistException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
     }
 
     //CRUD : update
@@ -55,7 +60,7 @@ public class AppUserController {
 
     //CRUD : delete
     @DeleteMapping("/app-user/{id}")
-    public ResponseEntity<HttpStatus> deleteAppUSer(@PathVariable("id") long idAppUserToDelete){
+    public ResponseEntity<HttpStatus> deleteAppUSer(@PathVariable("id") long idAppUserToDelete) {
         try {
             appUserService.delete(idAppUserToDelete);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
