@@ -56,7 +56,13 @@ public class AuthRestController {
         } catch (BadCredentialsException e) {
             throw new Exception("INVALID_CREDENTIALS", e);
         }
-
     }
 
+    // Protected Crud -> return data solely based on existing token
+    @GetMapping("/logged-app-user")
+    public ResponseEntity<AppUserDto> getLoggedAppUser(@RequestBody String token) throws Exception {
+        String email = jwtUtils.getEmailFromToken(token);
+        AppUserDto connectedUser = new AppUserDto(appUserService.fetchByEmail(email));
+        return new ResponseEntity<>(connectedUser, HttpStatus.OK);
+    }
 }

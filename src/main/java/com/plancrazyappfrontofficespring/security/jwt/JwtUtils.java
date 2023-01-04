@@ -51,7 +51,7 @@ public class JwtUtils {
     }
 
 
-    public String getUsernameFromToken(String token) {
+    public String getEmailFromToken(String token) {
         return Jwts
                 .parserBuilder()
                 .setSigningKey(Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8)))

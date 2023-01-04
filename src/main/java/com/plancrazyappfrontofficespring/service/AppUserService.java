@@ -41,6 +41,11 @@ public class AppUserService {
         return appUserOpt.orElseThrow(() -> new Exception());
     }
 
+    public AppUser fetchByEmail(String email) throws Exception {
+        Optional<AppUser> appUserOpt = appUserRepository.findUserByEmail(email);
+        return appUserOpt.orElseThrow(() -> new Exception());
+    }
+
     @Transactional
     public AppUserDto addAppUser(AppUserDto dto) throws UserAlreadyExistException {
         boolean alreadyExist = appUserRepository.existsByEmail(dto.getEmail());
