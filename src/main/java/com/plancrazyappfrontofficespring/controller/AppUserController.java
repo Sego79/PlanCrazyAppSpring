@@ -41,31 +41,12 @@ public class AppUserController {
     }
 
 
-    //CRUD : create
-    @PostMapping("/signup")
-    public ResponseEntity<AppUserDto> createAppUser(@RequestBody AppUserDto dto) {
-        try {
-            AppUserDto newAppUserDto = appUserService.addAppUser(dto);
-            return ResponseEntity.status(HttpStatus.CREATED).body(newAppUserDto);
-        } catch (UserAlreadyExistException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
-        }
-    }
-
-    //CRUD : update
-//    @PutMapping("/app-user")
-//    public ResponseEntity<AppUserDto> appUserToEdit(@RequestBody AppUserDto appUserDto) throws Exception {
-//
-//        AppUserDto returnedDto = appUserService.updateAppUser(appUserDto);
-//        return new ResponseEntity<>(returnedDto, HttpStatus.OK);
-//    }
-
-
     //CRUD : delete
-    @DeleteMapping("/app-user/{id}")
-    public ResponseEntity<HttpStatus> deleteAppUSer(@PathVariable("id") long idAppUserToDelete) {
+    @DeleteMapping("/app-user")
+    public ResponseEntity<HttpStatus> deleteAppUSer(@RequestHeader(HttpHeaders.AUTHORIZATION) String headerAuth) {
+        String email = jwtUtils.getEmailFromToken(jwtUtils.parseStringHeaderAuthorization(headerAuth));
         try {
-            appUserService.delete(idAppUserToDelete);
+            appUserService.delete(email);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

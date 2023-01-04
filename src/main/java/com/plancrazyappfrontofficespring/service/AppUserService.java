@@ -98,7 +98,7 @@ public class AppUserService {
     }
 
     @Transactional
-    public void delete(Long id) {
-        appUserRepository.deleteById(id);
+    public void delete(String email) {
+        appUserRepository.deleteByEmail(email);
     }
 }
