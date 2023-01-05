@@ -36,6 +36,7 @@ public class AppUserController {
         AppUserDto connectedUser = appUserService.getConnectedUser(headerAuth);
         appUserDto.setEmail(connectedUser.getEmail());
         appUserDto.setAppUserId(connectedUser.getAppUserId());
+        appUserDto.setNickname(connectedUser.getNickname());
         appUserDto.setPassword(connectedUser.getPassword());
         appUserDto.setPhoneNumber(connectedUser.getPhoneNumber());
         AppUserDto returnedDto = appUserService.updateAppUser(appUserDto);
