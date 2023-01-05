@@ -111,4 +111,19 @@ public class TaskDto {
     public void setPrivate(Boolean aPrivate) {
         isPrivate = aPrivate;
     }
+
+    @Override
+    public String toString() {
+        return "TaskDto{" +
+                "taskId=" + taskId +
+                ", taskTitle='" + taskTitle + '\'' +
+                ", description='" + description + '\'' +
+                ", location='" + location + '\'' +
+                ", startingDate=" + startingDate +
+                ", startingHour=" + startingHour +
+                ", endingDate=" + endingDate +
+                ", endingHour=" + endingHour +
+                ", isPrivate=" + isPrivate +
+                '}';
+    }
 }

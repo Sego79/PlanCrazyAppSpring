@@ -1,7 +1,7 @@
 package com.plancrazyappfrontofficespring.service;
 
 import com.plancrazyappfrontofficespring.controller.dto.AppUserDto;
-import com.plancrazyappfrontofficespring.exception.UserAlreadyExistException;
+import com.plancrazyappfrontofficespring.model.exception.UserAlreadyExistException;
 import com.plancrazyappfrontofficespring.model.AppUser;
 import com.plancrazyappfrontofficespring.model.Role;
 import com.plancrazyappfrontofficespring.model.RoleEnum;

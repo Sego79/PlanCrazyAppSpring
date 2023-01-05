@@ -2,7 +2,7 @@ package com.plancrazyappfrontofficespring.controller;
 
 import com.plancrazyappfrontofficespring.controller.dto.AppUserDto;
 import com.plancrazyappfrontofficespring.controller.dto.SigninRequest;
-import com.plancrazyappfrontofficespring.exception.UserAlreadyExistException;
+import com.plancrazyappfrontofficespring.model.exception.UserAlreadyExistException;
 import com.plancrazyappfrontofficespring.model.AppUser;
 import com.plancrazyappfrontofficespring.security.jwt.JwtResponse;
 import com.plancrazyappfrontofficespring.security.jwt.JwtUtils;

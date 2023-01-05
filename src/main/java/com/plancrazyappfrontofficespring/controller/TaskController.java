@@ -51,7 +51,9 @@ public class TaskController {
 
     @PostMapping("/task")
     public ResponseEntity<TaskDto> createTask(@RequestHeader(HttpHeaders.AUTHORIZATION) String headerAuth, @RequestBody TaskDto dto) throws Exception {
+        System.out.println(dto);
         AppUserDto connectedUser = appUserService.getConnectedUser(headerAuth);
+        System.out.println(connectedUser);
         TaskDto returnedTaskDto = taskService.addTask(dto, connectedUser);
         return ResponseEntity.status(HttpStatus.CREATED).body(returnedTaskDto);
     }

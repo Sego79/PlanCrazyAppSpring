@@ -1,7 +1,6 @@
 package com.plancrazyappfrontofficespring.controller;
 
 import com.plancrazyappfrontofficespring.controller.dto.AppUserDto;
-import com.plancrazyappfrontofficespring.exception.UserAlreadyExistException;
 import com.plancrazyappfrontofficespring.security.jwt.JwtUtils;
 import com.plancrazyappfrontofficespring.service.AppUserService;
 import org.springframework.beans.factory.annotation.Autowired;
