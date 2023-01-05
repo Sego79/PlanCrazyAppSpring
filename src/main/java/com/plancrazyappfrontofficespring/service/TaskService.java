@@ -4,7 +4,10 @@ import com.plancrazyappfrontofficespring.controller.dto.AppUserDto;
 import com.plancrazyappfrontofficespring.controller.dto.TaskDto;
 import com.plancrazyappfrontofficespring.model.AppUser;
 import com.plancrazyappfrontofficespring.model.Task;
+import com.plancrazyappfrontofficespring.model.UserTaskAssociation;
+import com.plancrazyappfrontofficespring.repository.AppUserRepository;
 import com.plancrazyappfrontofficespring.repository.TaskRepository;
+import com.plancrazyappfrontofficespring.repository.UserTaskAssociationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +21,10 @@ public class TaskService {
 
     @Autowired
     private TaskRepository taskRepository;
+    @Autowired
+    private AppUserRepository appUserRepository;
+    @Autowired
+    private UserTaskAssociationRepository userTaskAssociationRepository;
 
     public List<TaskDto> fetchTask() {
         List<Task> taskList = taskRepository.findAll();
@@ -32,8 +39,8 @@ public class TaskService {
     }
 
     @Transactional
-    public TaskDto addTask(TaskDto dto){
-        Task task =  new Task(
+    public TaskDto addTask(TaskDto dto, AppUserDto appUserDto) {
+        Task task = new Task(
                 dto.getTaskTitle(),
                 dto.getDescription(),
                 dto.getLocation(),
@@ -44,7 +51,13 @@ public class TaskService {
                 dto.getPrivate()
         );
 
+        AppUser connectedAppUser = appUserRepository.findById(appUserDto.getAppUserId()).get();//todo : meilleure gestion de l'optionnal possible ?
+        UserTaskAssociation associationTable = new UserTaskAssociation(connectedAppUser, task);
+
         taskRepository.save(task);
+        userTaskAssociationRepository.save(associationTable);
+        appUserRepository.save(connectedAppUser);
+
         return new TaskDto(task);
     }
 
@@ -53,7 +66,7 @@ public class TaskService {
 
         Optional<Task> taskToUpdate = taskRepository.findById(taskDto.getTaskId());
 
-        if(taskToUpdate.isPresent()) {
+        if (taskToUpdate.isPresent()) {
             Task updateTaskTemp = taskToUpdate.get();
             updateTaskTemp.setTaskId(taskDto.getTaskId());
             updateTaskTemp.setTaskTitle(taskDto.getTaskTitle());
@@ -72,7 +85,7 @@ public class TaskService {
     }
 
     @Transactional
-    public void delete(Long id){
+    public void delete(Long id) {
         taskRepository.deleteById(id);
     }
 }

@@ -46,6 +46,7 @@ public class AppUserController {
 
 
     //CRUD : delete
+    // todo : vérifier qu'on supprime bien le token dans le back (genre ?)
     @DeleteMapping("/app-user")
     public ResponseEntity<HttpStatus> deleteAppUSer(@RequestHeader(HttpHeaders.AUTHORIZATION) String headerAuth) {
         String email = jwtUtils.getEmailFromToken(jwtUtils.parseStringHeaderAuthorization(headerAuth));

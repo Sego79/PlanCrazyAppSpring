@@ -21,6 +21,11 @@ public class UserTaskAssociation {
 
     }
 
+    public UserTaskAssociation(AppUser appUser, Task task) {
+        this.appUser = appUser;
+        this.task = task;
+    }
+
     public Long getUserTaskAssociationId() {
         return userTaskAssociationId;
     }
