@@ -34,28 +34,19 @@ public class TaskController {
     }
 
     @GetMapping("/task/{id}")
-    public ResponseEntity<Task> getTaskById(@RequestHeader(HttpHeaders.AUTHORIZATION) String headerAuth, @PathVariable("id") long id) throws Exception {
+    public ResponseEntity<TaskDto> getTaskById(@RequestHeader(HttpHeaders.AUTHORIZATION) String headerAuth, @PathVariable("id") long id) throws Exception {
         AppUserDto connectedUser = appUserService.getConnectedUser(headerAuth);
-        // todo : rajouter une méthode qui vérifie que l'utilisateur connecté apparaît dans la liste d'utilisateurs
-        Optional<Task> optTask = Optional.ofNullable(taskService.fetchById(id));
+        Optional<TaskDto> optTask = Optional.ofNullable(taskService.fetchById(id));
         if (optTask.isPresent()) {
-            Task task = optTask.get();
-            return new ResponseEntity<>(task, HttpStatus.OK);//todo : marche pas
-        } else {
+            TaskDto task = optTask.get();
+            if(taskService.taskBelongsToUser(task, connectedUser)) {
+                return new ResponseEntity<>(task, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            }
+        } else { //todo : gérer cas id not found
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-//        if (optTask.isPresent()) {
-//            Task task = optTask.get();
-//            if(taskService.taskBelongsToUser(task, connectedUser)) {
-//                System.out.println("utilisateur connecté");
-//                return new ResponseEntity<>(task, HttpStatus.OK);
-//            } else {
-//                System.out.println("utilisateur non connecté");
-//                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-//            }
-//        } else {
-//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//        }
     }
 
     @PostMapping("/task")
