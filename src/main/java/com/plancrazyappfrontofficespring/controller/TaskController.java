@@ -28,8 +28,10 @@ public class TaskController {
     private AppUserService appUserService;
 
     @GetMapping("/task")
-    public ResponseEntity<List<TaskDto>> getAppUserListTaskTask() { //todo : il faudrait pour récupérer ici uniquement les tâches de l'utilisateur connecté
-        List<TaskDto> taskDtoList = taskService.fetchTask();
+    public ResponseEntity<List<TaskDto>> getAppUserListTask(@RequestHeader(HttpHeaders.AUTHORIZATION) String headerAuth) throws Exception {
+        String email = jwtUtils.getEmailFromToken(jwtUtils.parseStringHeaderAuthorization(headerAuth));
+        AppUserDto connectedUser = new AppUserDto(appUserService.fetchByEmail(email));
+        List<TaskDto> taskDtoList = taskService.fetchTaskOfUser(connectedUser);
         return ResponseEntity.status(HttpStatus.OK).body(taskDtoList);
     }
 

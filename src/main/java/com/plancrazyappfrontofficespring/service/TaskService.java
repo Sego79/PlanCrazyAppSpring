@@ -33,6 +33,13 @@ public class TaskService {
                 .collect(Collectors.toList());
     }
 
+    public List<TaskDto> fetchTaskOfUser(AppUserDto connectedUser) {
+        return userTaskAssociationRepository.findAll().stream()
+                .filter(userTaskAssociation -> userTaskAssociation.getUser().getAppUserId() == connectedUser.getAppUserId())
+                .map(userTaskAssociation -> new TaskDto(userTaskAssociation.getTask()))
+                .collect(Collectors.toList());
+    }
+
     public Task fetchById(Long id) throws Exception {
         Optional<Task> taskOpt = taskRepository.findById(id);
         return taskOpt.orElseThrow(() -> new Exception());
