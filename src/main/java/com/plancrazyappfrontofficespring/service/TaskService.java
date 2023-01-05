@@ -40,6 +40,7 @@ public class TaskService {
                 .collect(Collectors.toList());
     }
 
+    // todo : transformer en task dto ?
     public Task fetchById(Long id) throws Exception {
         Optional<Task> taskOpt = taskRepository.findById(id);
         return taskOpt.orElseThrow(() -> new Exception());
@@ -94,5 +95,11 @@ public class TaskService {
     @Transactional
     public void delete(Long id) {
         taskRepository.deleteById(id);
+    }
+
+    public boolean taskBelongsToUser(Task task, AppUserDto connectedUser) {
+        return userTaskAssociationRepository.findAll().stream()
+                .filter(userTaskAssociation -> userTaskAssociation.getTask().getTaskId() == task.getTaskId())
+                .anyMatch(userTaskAssociation -> userTaskAssociation.getUser().getAppUserId() == connectedUser.getAppUserId());
     }
 }

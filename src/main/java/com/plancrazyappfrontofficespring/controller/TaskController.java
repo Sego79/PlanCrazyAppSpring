@@ -2,6 +2,7 @@ package com.plancrazyappfrontofficespring.controller;
 
 import com.plancrazyappfrontofficespring.controller.dto.AppUserDto;
 import com.plancrazyappfrontofficespring.controller.dto.TaskDto;
+import com.plancrazyappfrontofficespring.model.AppUser;
 import com.plancrazyappfrontofficespring.model.Task;
 import com.plancrazyappfrontofficespring.security.jwt.JwtUtils;
 import com.plancrazyappfrontofficespring.service.AppUserService;
@@ -38,10 +39,23 @@ public class TaskController {
         // todo : rajouter une méthode qui vérifie que l'utilisateur connecté apparaît dans la liste d'utilisateurs
         Optional<Task> optTask = Optional.ofNullable(taskService.fetchById(id));
         if (optTask.isPresent()) {
-            return new ResponseEntity<>(optTask.get(), HttpStatus.OK);
+            Task task = optTask.get();
+            return new ResponseEntity<>(task, HttpStatus.OK);//todo : marche pas
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+//        if (optTask.isPresent()) {
+//            Task task = optTask.get();
+//            if(taskService.taskBelongsToUser(task, connectedUser)) {
+//                System.out.println("utilisateur connecté");
+//                return new ResponseEntity<>(task, HttpStatus.OK);
+//            } else {
+//                System.out.println("utilisateur non connecté");
+//                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+//            }
+//        } else {
+//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//        }
     }
 
     @PostMapping("/task")
