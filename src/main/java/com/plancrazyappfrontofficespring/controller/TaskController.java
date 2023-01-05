@@ -23,21 +23,20 @@ public class TaskController {
     @Autowired
     private TaskService taskService;
     @Autowired
-    private JwtUtils jwtUtils;
-    @Autowired
     private AppUserService appUserService;
 
     @GetMapping("/task")
     public ResponseEntity<List<TaskDto>> getAppUserListTask(@RequestHeader(HttpHeaders.AUTHORIZATION) String headerAuth) throws Exception {
-        String email = jwtUtils.getEmailFromToken(jwtUtils.parseStringHeaderAuthorization(headerAuth));
-        AppUserDto connectedUser = new AppUserDto(appUserService.fetchByEmail(email));
+        AppUserDto connectedUser = appUserService.getConnectedUser(headerAuth);
         List<TaskDto> taskDtoList = taskService.fetchTaskOfUser(connectedUser);
         return ResponseEntity.status(HttpStatus.OK).body(taskDtoList);
     }
 
     @GetMapping("/task/{id}")
-    public ResponseEntity<Task> getTaskById(@PathVariable("id") long id) throws Exception {
-        Optional<Task> optTask = Optional.ofNullable(taskService.fetchById(id)); // todo : rajouter une méthode qui vérifie que l'utilisateur connecté apparaît dans la liste d'utilisateurs
+    public ResponseEntity<Task> getTaskById(@RequestHeader(HttpHeaders.AUTHORIZATION) String headerAuth, @PathVariable("id") long id) throws Exception {
+        AppUserDto connectedUser = appUserService.getConnectedUser(headerAuth);
+        // todo : rajouter une méthode qui vérifie que l'utilisateur connecté apparaît dans la liste d'utilisateurs
+        Optional<Task> optTask = Optional.ofNullable(taskService.fetchById(id));
         if (optTask.isPresent()) {
             return new ResponseEntity<>(optTask.get(), HttpStatus.OK);
         } else {
@@ -47,21 +46,22 @@ public class TaskController {
 
     @PostMapping("/task")
     public ResponseEntity<TaskDto> createTask(@RequestHeader(HttpHeaders.AUTHORIZATION) String headerAuth, @RequestBody TaskDto dto) throws Exception {
-        String email = jwtUtils.getEmailFromToken(jwtUtils.parseStringHeaderAuthorization(headerAuth));
-        AppUserDto connectedUser = new AppUserDto(appUserService.fetchByEmail(email));
+        AppUserDto connectedUser = appUserService.getConnectedUser(headerAuth);
         TaskDto returnedTaskDto = taskService.addTask(dto, connectedUser);
         return ResponseEntity.status(HttpStatus.CREATED).body(returnedTaskDto);
     }
 
     @PutMapping("/task")
-    public ResponseEntity<TaskDto> taskToEdit(@RequestBody TaskDto taskDto) throws Exception {
-// todo : rajouter une méthode qui vérifie que l'utilisateur connecté apparaît dans la liste d'utilisateurs
+    public ResponseEntity<TaskDto> taskToEdit(@RequestHeader(HttpHeaders.AUTHORIZATION) String headerAuth, @RequestBody TaskDto taskDto) throws Exception {
+        AppUserDto connectedUser = appUserService.getConnectedUser(headerAuth);
+        // todo : rajouter une méthode qui vérifie que l'utilisateur connecté apparaît dans la liste d'utilisateurs
         TaskDto returnedTaskDto = taskService.updateTask(taskDto);
         return new ResponseEntity<>(returnedTaskDto, HttpStatus.OK);
     }
 
     @DeleteMapping("/task/{id}")
-    public ResponseEntity<HttpStatus> deleteAppUSer(@PathVariable("id") long taskID){
+    public ResponseEntity<HttpStatus> deleteAppUSer(@RequestHeader(HttpHeaders.AUTHORIZATION) String headerAuth, @PathVariable("id") long taskID) throws Exception {
+        AppUserDto connectedUser = appUserService.getConnectedUser(headerAuth);
         // todo : rajouter une méthode qui vérifie que l'utilisateur connecté apparaît dans la liste d'utilisateurs
         try {
             taskService.delete(taskID);

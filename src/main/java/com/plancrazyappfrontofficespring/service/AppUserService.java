@@ -7,6 +7,7 @@ import com.plancrazyappfrontofficespring.model.Role;
 import com.plancrazyappfrontofficespring.model.RoleEnum;
 import com.plancrazyappfrontofficespring.repository.AppUserRepository;
 import com.plancrazyappfrontofficespring.repository.RoleRepository;
+import com.plancrazyappfrontofficespring.security.jwt.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -24,9 +25,10 @@ public class AppUserService {
     private AppUserRepository appUserRepository;
     @Autowired
     private RoleRepository roleRepository;
-
     @Autowired
     private PasswordEncoder encoder;
+    @Autowired
+    private JwtUtils jwtUtils;
 
 
     public List<AppUserDto> fetchAppUser() {
@@ -100,5 +102,11 @@ public class AppUserService {
     @Transactional
     public void delete(String email) {
         appUserRepository.deleteByEmail(email);
+    }
+
+    public AppUserDto getConnectedUser(String headerAuth) throws Exception {
+        String email = jwtUtils.getEmailFromToken(jwtUtils.parseStringHeaderAuthorization(headerAuth));
+        AppUserDto connectedUser = new AppUserDto(fetchByEmail(email));
+        return connectedUser;
     }
 }

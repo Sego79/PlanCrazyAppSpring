@@ -25,8 +25,7 @@ public class AppUserController {
     // CRUD : find the connected user
     @GetMapping("/app-user")
     public ResponseEntity<AppUserDto> getLoggedAppUser(@RequestHeader(HttpHeaders.AUTHORIZATION) String headerAuth) throws Exception {
-        String email = jwtUtils.getEmailFromToken(jwtUtils.parseStringHeaderAuthorization(headerAuth));
-        AppUserDto connectedUser = new AppUserDto(appUserService.fetchByEmail(email));
+        AppUserDto connectedUser = appUserService.getConnectedUser(headerAuth);
         return new ResponseEntity<>(connectedUser, HttpStatus.OK);
     }
 
@@ -34,8 +33,7 @@ public class AppUserController {
     // todo : check if all unique fields are well protected
     @PutMapping("/app-user")
     public ResponseEntity<AppUserDto> appUserEdit(@RequestHeader(HttpHeaders.AUTHORIZATION) String headerAuth, @RequestBody AppUserDto appUserDto) throws Exception {
-        String email = jwtUtils.getEmailFromToken(jwtUtils.parseStringHeaderAuthorization(headerAuth));
-        AppUserDto connectedUser = new AppUserDto(appUserService.fetchByEmail(email));
+        AppUserDto connectedUser = appUserService.getConnectedUser(headerAuth);
         appUserDto.setEmail(connectedUser.getEmail());
         appUserDto.setAppUserId(connectedUser.getAppUserId());
         appUserDto.setPassword(connectedUser.getPassword());
