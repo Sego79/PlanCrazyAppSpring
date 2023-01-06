@@ -60,7 +60,9 @@ public class TaskController {
 
     @PutMapping("/task")
     public ResponseEntity<TaskDto> taskToEdit(@RequestHeader(HttpHeaders.AUTHORIZATION) String headerAuth, @RequestBody TaskDto taskDto) throws Exception {
+        System.out.println(taskDto);
         AppUserDto connectedUser = appUserService.getConnectedUser(headerAuth);
+        System.out.println(connectedUser);
         // todo : rajouter une méthode qui vérifie que l'utilisateur connecté apparaît dans la liste d'utilisateurs
         TaskDto returnedTaskDto = taskService.updateTask(taskDto);
         return new ResponseEntity<>(returnedTaskDto, HttpStatus.OK);
