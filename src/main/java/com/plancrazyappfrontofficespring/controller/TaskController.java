@@ -1,6 +1,7 @@
 package com.plancrazyappfrontofficespring.controller;
 
 import com.plancrazyappfrontofficespring.controller.dto.AppUserDto;
+import com.plancrazyappfrontofficespring.controller.dto.ShareRequest;
 import com.plancrazyappfrontofficespring.controller.dto.TaskDto;
 import com.plancrazyappfrontofficespring.model.AppUser;
 import com.plancrazyappfrontofficespring.model.Task;
@@ -87,6 +88,30 @@ public class TaskController {
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
 
+    @PutMapping("/task/share")
+    public ResponseEntity<TaskDto> taskToShare(@RequestHeader(HttpHeaders.AUTHORIZATION) String headerAuth,
+                                               @RequestBody ShareRequest shareRequestBody) throws Exception {
+
+        System.out.println("\nTache à partager :");
+        System.out.println(shareRequestBody.getTaskId());
+
+        AppUserDto connectedUser = appUserService.getConnectedUser(headerAuth);
+        System.out.println("Utilisateur connecté :");
+        System.out.println(connectedUser);
+
+        AppUser appUserToShare = appUserService.fetchByEmail(shareRequestBody.getAppUserToShareEmail());
+        System.out.println("Utilisateur à qui partager :");
+        System.out.println(appUserToShare);
+
+
+//        if (taskService.taskBelongsToUser(taskDto, connectedUser)) {
+//            TaskDto returnedTaskDto = taskService.updateTask(taskDto);
+//            return new ResponseEntity<>(returnedTaskDto, HttpStatus.OK);
+//        } else {
+//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }

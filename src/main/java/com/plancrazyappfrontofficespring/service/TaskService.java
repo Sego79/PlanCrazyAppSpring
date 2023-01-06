@@ -28,6 +28,7 @@ public class TaskService {
     @Autowired
     private UserTaskAssociationRepository userTaskAssociationRepository;
 
+    // todo : si pas de raison métier de garder le fetchTask, ben on garde pas !
     public List<TaskDto> fetchTask() {
         List<Task> taskList = taskRepository.findAll();
         return taskList.stream()
@@ -100,6 +101,9 @@ public class TaskService {
         userTaskAssociationRepository.deleteAllByTask(taskDelete.orElseThrow(() -> new Exception()));
         taskRepository.delete(taskDelete.orElseThrow(() -> new Exception()));//todo : ici créer une nouvelle exception de type task not found ?
     }
+
+//    @Transactional
+//    public void
 
     public boolean taskBelongsToUser(TaskDto task, AppUserDto connectedUser) {
         return userTaskAssociationRepository.findAll().stream()
