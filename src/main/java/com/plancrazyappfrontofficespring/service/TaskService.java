@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+//todo : mieux gérer les exceptions : envoyer des user not found exception, etc. par exemple :)
+
 @Service
 public class TaskService {
 
@@ -92,8 +94,11 @@ public class TaskService {
     }
 
     @Transactional
-    public void delete(Long id) {
-        taskRepository.deleteById(id);
+    public void delete(Long id) throws Exception {
+        System.out.println("Id reçu par la fonction delete de TaskService : " + id);
+        Optional<Task> taskDelete = taskRepository.findById(id);
+        userTaskAssociationRepository.deleteAllByTask(taskDelete.orElseThrow(() -> new Exception()));
+        taskRepository.delete(taskDelete.orElseThrow(() -> new Exception()));//todo : ici créer une nouvelle exception de type task not found ?
     }
 
     public boolean taskBelongsToUser(TaskDto task, AppUserDto connectedUser) {

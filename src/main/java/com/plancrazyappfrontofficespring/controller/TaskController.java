@@ -63,20 +63,30 @@ public class TaskController {
         System.out.println(taskDto);
         AppUserDto connectedUser = appUserService.getConnectedUser(headerAuth);
         System.out.println(connectedUser);
-        // todo : rajouter une méthode qui vérifie que l'utilisateur connecté apparaît dans la liste d'utilisateurs
-        TaskDto returnedTaskDto = taskService.updateTask(taskDto);
-        return new ResponseEntity<>(returnedTaskDto, HttpStatus.OK);
+        if (taskService.taskBelongsToUser(taskDto, connectedUser)) {
+            TaskDto returnedTaskDto = taskService.updateTask(taskDto);
+            return new ResponseEntity<>(returnedTaskDto, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @DeleteMapping("/task/{id}")
     public ResponseEntity<HttpStatus> deleteAppUSer(@RequestHeader(HttpHeaders.AUTHORIZATION) String headerAuth, @PathVariable("id") long taskID) throws Exception {
+        System.out.println(taskID);
+        TaskDto taskDto = taskService.fetchById(taskID);
         AppUserDto connectedUser = appUserService.getConnectedUser(headerAuth);
-        // todo : rajouter une méthode qui vérifie que l'utilisateur connecté apparaît dans la liste d'utilisateurs
-        try {
-            taskService.delete(taskID);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        System.out.println(connectedUser);
+        if (taskService.taskBelongsToUser(taskDto, connectedUser)) {
+            try {
+                taskService.delete(taskID);
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            } catch (Exception e) {
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+
     }
 }
