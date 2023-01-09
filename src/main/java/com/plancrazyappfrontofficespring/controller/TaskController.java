@@ -102,6 +102,9 @@ public class TaskController {
         System.out.println("Utilisateur connecté :");
         System.out.println(connectedUser);
 
+        System.out.println("Mail reçu :");
+        System.out.println(shareRequestBody.getAppUserToShareEmail());
+
         if (taskService.taskBelongsToUser(taskDto, connectedUser)) {
             try {
                 if (appUserService.existsByEmail(shareRequestBody.getAppUserToShareEmail())) {
