@@ -31,9 +31,9 @@ public class TaskService {
 
     public TaskDto fetchById(Long id) throws Exception {
         Optional<Task> taskOpt = taskRepository.findById(id);
-        String ownerNickname = getTaskOwnerNickname(taskOpt.orElseThrow(() -> new Exception()));
+        String ownerEmail = getTaskOwnerEmail(taskOpt.orElseThrow(() -> new Exception()));
         TaskDto taskDto = new TaskDto(taskOpt.orElseThrow(() -> new Exception()));
-        taskDto.setOwnerNickname(ownerNickname);
+        taskDto.setOwnerEmail(ownerEmail);
         return taskDto;
     }
 
@@ -42,7 +42,7 @@ public class TaskService {
                 .filter(userTaskAssociation -> userTaskAssociation.getUser().getAppUserId() == connectedUser.getAppUserId())
                 .map(userTaskAssociation -> {
                     try {
-                        return taskDtoWithOwnerNicknameFromAssociation(userTaskAssociation);
+                        return taskDtoWithOwnerEmailFromAssociation(userTaskAssociation);
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
@@ -50,21 +50,20 @@ public class TaskService {
                 .collect(Collectors.toList());
     }
 
-    private static TaskDto taskDtoWithOwnerNicknameFromAssociation(UserTaskAssociation userTaskAssociation) throws Exception {
+    private static TaskDto taskDtoWithOwnerEmailFromAssociation(UserTaskAssociation userTaskAssociation) throws Exception {
         TaskDto taskDto = new TaskDto(userTaskAssociation.getTask());
         if (userTaskAssociation.isOwner()){
-            taskDto.setOwnerNickname(userTaskAssociation.getUser().getNickname());
+            taskDto.setOwnerEmail(userTaskAssociation.getUser().getEmail());
         } else {
-            String ownerNickname = getTaskOwnerNickname(userTaskAssociation.getTask());
-            taskDto.setOwnerNickname(ownerNickname);
+            taskDto.setOwnerEmail(getTaskOwnerEmail(userTaskAssociation.getTask()));
         }
         return taskDto;
     }
 
-    private static String getTaskOwnerNickname(Task task) throws Exception {
+    private static String getTaskOwnerEmail(Task task) throws Exception {
         return task.getAssociationList().stream()
                 .filter(asso -> asso.isOwner())
-                .map(asso -> asso.getUser().getNickname())
+                .map(asso -> asso.getUser().getEmail())
                 .findFirst()
                 .orElseThrow(() -> new Exception());
     }

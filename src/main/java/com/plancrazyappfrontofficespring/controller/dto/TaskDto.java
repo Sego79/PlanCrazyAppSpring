@@ -25,7 +25,7 @@ public class TaskDto {
 
     private Boolean isPrivate;
 
-    private String ownerNickname;
+    private String ownerEmail;
 
     public TaskDto() {
     }
@@ -114,12 +114,12 @@ public class TaskDto {
         isPrivate = aPrivate;
     }
 
-    public String getOwnerNickname() {
-        return ownerNickname;
+    public String getOwnerEmail() {
+        return ownerEmail;
     }
 
-    public void setOwnerNickname(String ownerNickname) {
-        this.ownerNickname = ownerNickname;
+    public void setOwnerEmail(String ownerEmail) {
+        this.ownerEmail = ownerEmail;
     }
 
     @Override
