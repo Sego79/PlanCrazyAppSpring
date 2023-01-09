@@ -62,7 +62,7 @@ public class TaskService {
         );
 
         AppUser connectedAppUser = appUserRepository.findById(appUserDto.getAppUserId()).get();//todo : meilleure gestion de l'optionnal possible ?
-        UserTaskAssociation associationTable = new UserTaskAssociation(connectedAppUser, task);
+        UserTaskAssociation associationTable = new UserTaskAssociation(connectedAppUser, task, true);
 
         taskRepository.save(task);
         userTaskAssociationRepository.save(associationTable);
@@ -99,7 +99,7 @@ public class TaskService {
         AppUser appUser = appUserRepository.findById(appUserDto.getAppUserId()).orElseThrow(() -> new Exception());
         Task task = taskRepository.findById(taskDto.getTaskId()).orElseThrow(() -> new Exception());
 
-        UserTaskAssociation associationTable = new UserTaskAssociation(appUser, task);
+        UserTaskAssociation associationTable = new UserTaskAssociation(appUser, task, false);
 
         taskRepository.save(task);
         userTaskAssociationRepository.save(associationTable);
