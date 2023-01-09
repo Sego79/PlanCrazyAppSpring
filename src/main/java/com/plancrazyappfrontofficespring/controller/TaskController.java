@@ -80,7 +80,11 @@ public class TaskController {
         System.out.println(connectedUser);
         if (taskService.taskBelongsToUser(taskDto, connectedUser)) {
             try {
-                taskService.delete(taskID);
+                if (taskDto.getOwnerEmail().equals(connectedUser.getEmail())) {
+                    taskService.delete(taskID);
+                } else {
+                    taskService.deleteUserAssociated(taskID, connectedUser);
+                }
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             } catch (Exception e) {
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

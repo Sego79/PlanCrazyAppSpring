@@ -134,6 +134,14 @@ public class TaskService {
         taskRepository.delete(taskDelete.orElseThrow(() -> new Exception()));//todo : ici créer une nouvelle exception de type task not found ?
     }
 
+    @Transactional
+    public void deleteUserAssociated(long taskID, AppUserDto connectedUser) throws Exception {
+        System.out.println("Id reçu par la fonction delete de TaskService : " + taskID);
+        Optional<Task> taskDelete = taskRepository.findById(taskID);
+        userTaskAssociationRepository.deleteByTaskAndAppUser(taskDelete.orElseThrow(() -> new Exception()),
+                appUserRepository.findById(connectedUser.getAppUserId()).orElseThrow(() -> new Exception()));
+    }
+
 //    @Transactional
 //    public void
 
