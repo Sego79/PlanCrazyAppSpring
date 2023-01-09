@@ -28,12 +28,21 @@ public class TaskService {
     @Autowired
     private UserTaskAssociationRepository userTaskAssociationRepository;
 
+
+    public TaskDto fetchById(Long id) throws Exception {
+        Optional<Task> taskOpt = taskRepository.findById(id);
+        String ownerNickname = getTaskOwnerNickname(taskOpt.orElseThrow(() -> new Exception()));
+        TaskDto taskDto = new TaskDto(taskOpt.orElseThrow(() -> new Exception()));
+        taskDto.setOwnerNickname(ownerNickname);
+        return taskDto;
+    }
+
     public List<TaskDto> fetchTaskOfUser(AppUserDto connectedUser) {
         return userTaskAssociationRepository.findAll().stream()
                 .filter(userTaskAssociation -> userTaskAssociation.getUser().getAppUserId() == connectedUser.getAppUserId())
                 .map(userTaskAssociation -> {
                     try {
-                        return taskDtoWithOwnerNickname(userTaskAssociation);
+                        return taskDtoWithOwnerNicknameFromAssociation(userTaskAssociation);
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
@@ -41,24 +50,23 @@ public class TaskService {
                 .collect(Collectors.toList());
     }
 
-    private static TaskDto taskDtoWithOwnerNickname(UserTaskAssociation userTaskAssociation) throws Exception {
+    private static TaskDto taskDtoWithOwnerNicknameFromAssociation(UserTaskAssociation userTaskAssociation) throws Exception {
         TaskDto taskDto = new TaskDto(userTaskAssociation.getTask());
         if (userTaskAssociation.isOwner()){
             taskDto.setOwnerNickname(userTaskAssociation.getUser().getNickname());
         } else {
-            String ownerNickname = userTaskAssociation.getTask().getAssociationList().stream()
-                    .filter(asso -> asso.isOwner())
-                    .map(asso -> asso.getUser().getNickname())
-                    .findFirst()
-                    .orElseThrow(() -> new Exception());
+            String ownerNickname = getTaskOwnerNickname(userTaskAssociation.getTask());
             taskDto.setOwnerNickname(ownerNickname);
         }
         return taskDto;
     }
 
-    public TaskDto fetchById(Long id) throws Exception {
-        Optional<Task> taskOpt = taskRepository.findById(id);
-        return new TaskDto(taskOpt.orElseThrow(() -> new Exception()));
+    private static String getTaskOwnerNickname(Task task) throws Exception {
+        return task.getAssociationList().stream()
+                .filter(asso -> asso.isOwner())
+                .map(asso -> asso.getUser().getNickname())
+                .findFirst()
+                .orElseThrow(() -> new Exception());
     }
 
     @Transactional
