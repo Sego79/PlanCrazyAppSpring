@@ -68,7 +68,7 @@ public class TaskController {
             TaskDto returnedTaskDto = taskService.updateTask(taskDto);
             return new ResponseEntity<>(returnedTaskDto, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
     }
 
@@ -86,7 +86,7 @@ public class TaskController {
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
     }
 
@@ -95,23 +95,32 @@ public class TaskController {
                                                @RequestBody ShareRequest shareRequestBody) throws Exception {
 
         System.out.println("\nTache à partager :");
-        System.out.println(shareRequestBody.getTaskId());
+        TaskDto taskDto = taskService.fetchById(shareRequestBody.getTaskId());
+        System.out.println(taskDto);
 
         AppUserDto connectedUser = appUserService.getConnectedUser(headerAuth);
         System.out.println("Utilisateur connecté :");
         System.out.println(connectedUser);
 
-        AppUser appUserToShare = appUserService.fetchByEmail(shareRequestBody.getAppUserToShareEmail());
-        System.out.println("Utilisateur à qui partager :");
-        System.out.println(appUserToShare);
+        if (taskService.taskBelongsToUser(taskDto, connectedUser)) {
+            try {
+                if (appUserService.existsByEmail(shareRequestBody.getAppUserToShareEmail())) {
+                    AppUser appUserToShare = appUserService.fetchByEmail(shareRequestBody.getAppUserToShareEmail());
+                    System.out.println("Utilisateur à qui partager :");
+                    System.out.println(appUserToShare);
 
+                    taskService.shareTaskToUser(taskDto, new AppUserDto(appUserToShare));
 
-//        if (taskService.taskBelongsToUser(taskDto, connectedUser)) {
-//            TaskDto returnedTaskDto = taskService.updateTask(taskDto);
-//            return new ResponseEntity<>(returnedTaskDto, HttpStatus.OK);
-//        } else {
-//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+                    return new ResponseEntity<>(HttpStatus.OK);
+                } else {
+                    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+                }
+
+            } catch (Exception e) {
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } else {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
     }
 }

@@ -109,4 +109,8 @@ public class AppUserService {
         AppUserDto connectedUser = new AppUserDto(fetchByEmail(email));
         return connectedUser;
     }
+
+    public boolean existsByEmail(String email) {
+        return appUserRepository.existsByEmail(email);
+    }
 }

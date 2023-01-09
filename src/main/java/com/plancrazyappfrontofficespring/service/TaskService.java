@@ -95,6 +95,18 @@ public class TaskService {
     }
 
     @Transactional
+    public void shareTaskToUser(TaskDto taskDto, AppUserDto appUserDto) throws Exception {
+        AppUser appUser = appUserRepository.findById(appUserDto.getAppUserId()).orElseThrow(() -> new Exception());
+        Task task = taskRepository.findById(taskDto.getTaskId()).orElseThrow(() -> new Exception());
+
+        UserTaskAssociation associationTable = new UserTaskAssociation(appUser, task);
+
+        taskRepository.save(task);
+        userTaskAssociationRepository.save(associationTable);
+        appUserRepository.save(appUser);
+    }
+
+    @Transactional
     public void delete(Long id) throws Exception {
         System.out.println("Id reçu par la fonction delete de TaskService : " + id);
         Optional<Task> taskDelete = taskRepository.findById(id);
