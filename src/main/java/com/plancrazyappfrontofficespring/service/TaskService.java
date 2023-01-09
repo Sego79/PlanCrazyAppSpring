@@ -28,19 +28,32 @@ public class TaskService {
     @Autowired
     private UserTaskAssociationRepository userTaskAssociationRepository;
 
-    // todo : si pas de raison métier de garder le fetchTask, ben on garde pas !
-    public List<TaskDto> fetchTask() {
-        List<Task> taskList = taskRepository.findAll();
-        return taskList.stream()
-                .map(g -> new TaskDto(g))
-                .collect(Collectors.toList());
-    }
-
     public List<TaskDto> fetchTaskOfUser(AppUserDto connectedUser) {
         return userTaskAssociationRepository.findAll().stream()
                 .filter(userTaskAssociation -> userTaskAssociation.getUser().getAppUserId() == connectedUser.getAppUserId())
-                .map(userTaskAssociation -> new TaskDto(userTaskAssociation.getTask()))
+                .map(userTaskAssociation -> {
+                    try {
+                        return taskDtoWithOwnerNickname(userTaskAssociation);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                })
                 .collect(Collectors.toList());
+    }
+
+    private static TaskDto taskDtoWithOwnerNickname(UserTaskAssociation userTaskAssociation) throws Exception {
+        TaskDto taskDto = new TaskDto(userTaskAssociation.getTask());
+        if (userTaskAssociation.isOwner()){
+            taskDto.setOwnerNickname(userTaskAssociation.getUser().getNickname());
+        } else {
+            String ownerNickname = userTaskAssociation.getTask().getAssociationList().stream()
+                    .filter(asso -> asso.isOwner())
+                    .map(asso -> asso.getUser().getNickname())
+                    .findFirst()
+                    .orElseThrow(() -> new Exception());
+            taskDto.setOwnerNickname(ownerNickname);
+        }
+        return taskDto;
     }
 
     public TaskDto fetchById(Long id) throws Exception {

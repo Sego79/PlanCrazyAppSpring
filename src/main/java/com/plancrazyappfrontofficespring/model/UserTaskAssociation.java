@@ -52,4 +52,12 @@ public class UserTaskAssociation {
     public void setTask(Task task) {
         this.task = task;
     }
+
+    public boolean isOwner() {
+        return owner;
+    }
+
+    public void setOwner(boolean owner) {
+        this.owner = owner;
+    }
 }
