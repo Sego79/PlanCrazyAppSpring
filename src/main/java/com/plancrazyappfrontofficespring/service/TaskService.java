@@ -146,11 +146,26 @@ public class TaskService {
                 .anyMatch(userTaskAssociation -> userTaskAssociation.getUser().getAppUserId() == connectedUser.getAppUserId());
     }
 
-    public boolean isPropertyOfAppUser(TaskDto task, AppUserDto connectedUser) throws Exception {
-        return userTaskAssociationRepository
-                .findUserTaskAssociationByAppUserAndTask(appUserRepository.findById(connectedUser.getAppUserId()).orElseThrow(() -> new Exception()),
-                        taskRepository.findById(task.getTaskId()).orElseThrow(() -> new Exception()))
-                .isOwner();
+    public boolean isPropertyOfAppUser(TaskDto taskDto, AppUserDto connectedUser) throws Exception {
+        if (!appUserRepository.findById(connectedUser.getAppUserId()).isPresent()) {
+            System.out.println("AppUser not found in property check");
+            return false;
+        }
+        if (!taskRepository.findById(taskDto.getTaskId()).isPresent()) {
+            System.out.println("Task not found in property check");
+            return false;
+        }
+        if (appUserRepository.findById(connectedUser.getAppUserId()).isPresent() && taskRepository.findById(taskDto.getTaskId()).isPresent()) {
+            AppUser connectedAppUser = appUserRepository.findById(connectedUser.getAppUserId()).get();
+            Task task = taskRepository.findById(taskDto.getTaskId()).get();
+            return userTaskAssociationRepository
+                    .findUserTaskAssociationByAppUserAndTask(connectedAppUser, task)
+                    .isOwner();
+        } else {
+            System.out.println("AppUser not found in property check");
+            return false;
+        }
+
     }
 
     public List<String> getEmailsOfAppUsersWhoTaskIsSharedWith(TaskDto task) {

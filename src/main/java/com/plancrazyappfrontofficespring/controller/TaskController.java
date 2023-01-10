@@ -41,7 +41,7 @@ public class TaskController {
         Optional<TaskDto> optTask = Optional.ofNullable(taskService.fetchById(id));
         if (optTask.isPresent()) {
             TaskDto task = optTask.get();
-            if(taskService.isSharedWithAppUser(task, connectedUser)) {
+            if (taskService.isSharedWithAppUser(task, connectedUser)) {
                 return new ResponseEntity<>(task, HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(HttpStatus.FORBIDDEN);
@@ -94,7 +94,7 @@ public class TaskController {
                                              @RequestBody ShareRequest shareRequestBody) throws Exception {
         TaskDto taskDto = taskService.fetchById(shareRequestBody.getTaskId());
         AppUserDto connectedUser = appUserService.getConnectedUser(headerAuth);
-        if (taskService.isSharedWithAppUser(taskDto, connectedUser)) {
+        if (taskService.isPropertyOfAppUser(taskDto, connectedUser)) {
             try {
                 if (appUserService.existsByEmail(shareRequestBody.getAppUserToShareEmail())) {
                     AppUser appUserToShare = appUserService.fetchByEmail(shareRequestBody.getAppUserToShareEmail());
@@ -114,12 +114,12 @@ public class TaskController {
 
     @GetMapping("/task/share/{id}")
     public ResponseEntity<List<String>> getSharedUsersEmailsOfTaskByTaskId(@RequestHeader(HttpHeaders.AUTHORIZATION) String headerAuth,
-                                                                      @PathVariable("id") long id) throws Exception {
+                                                                           @PathVariable("id") long id) throws Exception {
         AppUserDto connectedUser = appUserService.getConnectedUser(headerAuth);
         Optional<TaskDto> optTask = Optional.ofNullable(taskService.fetchById(id));
         if (optTask.isPresent()) {
             TaskDto task = optTask.get();
-            if(taskService.isSharedWithAppUser(task, connectedUser)) {
+            if (taskService.isSharedWithAppUser(task, connectedUser)) {
                 List<String> appUsersWhoTaskIsSharedWith = taskService.getEmailsOfAppUsersWhoTaskIsSharedWith(task);
                 return new ResponseEntity<>(appUsersWhoTaskIsSharedWith, HttpStatus.OK);
             } else {
@@ -168,36 +168,26 @@ public class TaskController {
     @DeleteMapping("/task/share/allTasks")
     public ResponseEntity<HttpStatus> unshareAllTasksWithAppUser(@RequestHeader(HttpHeaders.AUTHORIZATION) String headerAuth,
                                                                  @RequestBody ShareRequest shareRequestBody) throws Exception {
-        TaskDto taskDto = taskService.fetchById(shareRequestBody.getTaskId());
         AppUserDto connectedUser = appUserService.getConnectedUser(headerAuth);
-        if (taskService.isPropertyOfAppUser(taskDto, connectedUser)) {
-            try {
-                AppUser appUserToUnshare = appUserService.fetchByEmail(shareRequestBody.getAppUserToShareEmail());
-                userTaskAssociationService.deleteAllOwnedByUser1TasksOfUser2(connectedUser, appUserToUnshare);
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            } catch (Exception e) {
-                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        } else {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        try {
+            AppUser appUserToUnshare = appUserService.fetchByEmail(shareRequestBody.getAppUserToShareEmail());
+            userTaskAssociationService.deleteAllOwnedByUser1TasksOfUser2(connectedUser, appUserToUnshare);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @PutMapping("/task/share/allTasks")
     public ResponseEntity<HttpStatus> shareAllTasksWithAppUser(@RequestHeader(HttpHeaders.AUTHORIZATION) String headerAuth,
-                                                                 @RequestBody ShareRequest shareRequestBody) throws Exception {
-        TaskDto taskDto = taskService.fetchById(shareRequestBody.getTaskId());
+                                                               @RequestBody ShareRequest shareRequestBody) throws Exception {
         AppUserDto connectedUser = appUserService.getConnectedUser(headerAuth);
-        if (taskService.isPropertyOfAppUser(taskDto, connectedUser)) {
-            try {
-                AppUser appUserToShare = appUserService.fetchByEmail(shareRequestBody.getAppUserToShareEmail());
-                userTaskAssociationService.associateAllTasksOwnedByUser1ToUser2(connectedUser, appUserToShare);
-                return new ResponseEntity<>(HttpStatus.OK);
-            } catch (Exception e) {
-                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        } else {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        try {
+            AppUser appUserToShare = appUserService.fetchByEmail(shareRequestBody.getAppUserToShareEmail());
+            userTaskAssociationService.associateAllTasksOwnedByUser1ToUser2(connectedUser, appUserToShare);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
