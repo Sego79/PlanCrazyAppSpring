@@ -142,12 +142,16 @@ public class TaskService {
                 appUserRepository.findById(connectedUser.getAppUserId()).orElseThrow(() -> new Exception()));
     }
 
-//    @Transactional
-//    public void
-
-    public boolean taskBelongsToUser(TaskDto task, AppUserDto connectedUser) {
+    public boolean isSharedWithAppUser(TaskDto task, AppUserDto connectedUser) {
         return userTaskAssociationRepository.findAll().stream()
                 .filter(userTaskAssociation -> userTaskAssociation.getTask().getTaskId() == task.getTaskId())
                 .anyMatch(userTaskAssociation -> userTaskAssociation.getUser().getAppUserId() == connectedUser.getAppUserId());
+    }
+
+    public boolean isPropertyOfAppUser(TaskDto task, AppUserDto connectedUser) throws Exception {
+        return userTaskAssociationRepository
+                .findUserTaskAssociationByAppUserAndTask(appUserRepository.findById(connectedUser.getAppUserId()).orElseThrow(() -> new Exception()),
+                        taskRepository.findById(task.getTaskId()).orElseThrow(() -> new Exception()))
+                .isOwner();
     }
 }

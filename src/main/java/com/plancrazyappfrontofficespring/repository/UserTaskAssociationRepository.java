@@ -11,4 +11,6 @@ public interface UserTaskAssociationRepository  extends JpaRepository<UserTaskAs
     void deleteByTaskAndAppUser(Task task, AppUser user);
 
     void deleteAllByTask(Task task);
+
+    UserTaskAssociation findUserTaskAssociationByAppUserAndTask(AppUser appUser, Task task);
 }
