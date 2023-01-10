@@ -129,8 +129,8 @@ public class TaskController {
         }
     }
 
-    @GetMapping("/task/share/{id}") // todo
-    public ResponseEntity<TaskDto> getSharedUsersEmailsOfTaskByTaskId(@RequestHeader(HttpHeaders.AUTHORIZATION) String headerAuth,
+    @GetMapping("/task/share/{id}")
+    public ResponseEntity<List<String>> getSharedUsersEmailsOfTaskByTaskId(@RequestHeader(HttpHeaders.AUTHORIZATION) String headerAuth,
                                                                       @PathVariable("id") long id) throws Exception {
         AppUserDto connectedUser = appUserService.getConnectedUser(headerAuth);
         Optional<TaskDto> optTask = Optional.ofNullable(taskService.fetchById(id));
@@ -138,7 +138,8 @@ public class TaskController {
             TaskDto task = optTask.get();
             if(taskService.isSharedWithAppUser(task, connectedUser)) {
                 System.out.printf("\nOn veut la liste des utilisateurs qui ont eu les droits sur la tâche n°%d.\n", id);
-                return new ResponseEntity<>(task, HttpStatus.OK);
+                List<String> appUsersWhoTaskIsSharedWith = taskService.getEmailsOfAppUsersWhoTaskIsSharedWith(task);
+                return new ResponseEntity<>(appUsersWhoTaskIsSharedWith, HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(HttpStatus.FORBIDDEN);
             }

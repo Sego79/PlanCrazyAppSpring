@@ -154,4 +154,10 @@ public class TaskService {
                         taskRepository.findById(task.getTaskId()).orElseThrow(() -> new Exception()))
                 .isOwner();
     }
+
+    public List<String> getEmailsOfAppUsersWhoTaskIsSharedWith(TaskDto task) {
+        return taskRepository.findById(task.getTaskId()).get().getAssociationList().stream()
+                .map(asso -> asso.getUser().getEmail())
+                .collect(Collectors.toList());
+    }
 }
