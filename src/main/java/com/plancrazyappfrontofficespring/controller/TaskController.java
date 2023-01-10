@@ -6,6 +6,7 @@ import com.plancrazyappfrontofficespring.controller.dto.TaskDto;
 import com.plancrazyappfrontofficespring.model.AppUser;
 import com.plancrazyappfrontofficespring.service.AppUserService;
 import com.plancrazyappfrontofficespring.service.TaskService;
+import com.plancrazyappfrontofficespring.service.UserTaskAssociationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,8 @@ public class TaskController {
     private TaskService taskService;
     @Autowired
     private AppUserService appUserService;
+    @Autowired
+    private UserTaskAssociationService userTaskAssociationService;
 
     @GetMapping("/task")
     public ResponseEntity<List<TaskDto>> getConnectedAppUserListTask(@RequestHeader(HttpHeaders.AUTHORIZATION) String headerAuth) throws Exception {
@@ -165,6 +168,7 @@ public class TaskController {
                 AppUser appUserToUnshare = appUserService.fetchByEmail(shareRequestBody.getAppUserToShareEmail());
                 System.out.println("Utilisateur à qui départager :");
                 System.out.println(appUserToUnshare);
+                userTaskAssociationService.delete(appUserToUnshare, taskDto);
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             } catch (Exception e) {
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -185,12 +189,11 @@ public class TaskController {
         AppUserDto connectedUser = appUserService.getConnectedUser(headerAuth);
         System.out.println(connectedUser);
 
+
         if (taskService.isPropertyOfAppUser(taskDto, connectedUser)) {
             try {
                 System.out.println("IS OK. Maintenant on veut : supprimer toutes les associations, puis recréer l'association.");
-                AppUser appUserToUnshare = appUserService.fetchByEmail(shareRequestBody.getAppUserToShareEmail());
-                System.out.println("Utilisateur à qui départager :");
-                System.out.println(appUserToUnshare);
+                userTaskAssociationService.deleteAllNonOwnerUserOfThisTask(taskDto);
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             } catch (Exception e) {
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -216,6 +219,7 @@ public class TaskController {
                 AppUser appUserToUnshare = appUserService.fetchByEmail(shareRequestBody.getAppUserToShareEmail());
                 System.out.println("Utilisateur à qui départager :");
                 System.out.println(appUserToUnshare);
+                userTaskAssociationService.deleteAllOwnedByUser1TasksOfUser2(connectedUser, appUserToUnshare);
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             } catch (Exception e) {
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -241,6 +245,7 @@ public class TaskController {
                 AppUser appUserToShare = appUserService.fetchByEmail(shareRequestBody.getAppUserToShareEmail());
                 System.out.println("Utilisateur à qui partager :");
                 System.out.println(appUserToShare);
+                userTaskAssociationService.associateAllTasksOwnedByUser1ToUser2(connectedUser, appUserToShare);
                 return new ResponseEntity<>(HttpStatus.OK);
             } catch (Exception e) {
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
