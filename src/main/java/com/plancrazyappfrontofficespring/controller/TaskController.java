@@ -53,18 +53,14 @@ public class TaskController {
 
     @PostMapping("/task")
     public ResponseEntity<TaskDto> createTask(@RequestHeader(HttpHeaders.AUTHORIZATION) String headerAuth, @RequestBody TaskDto dto) throws Exception {
-        System.out.println(dto);
         AppUserDto connectedUser = appUserService.getConnectedUser(headerAuth);
-        System.out.println(connectedUser);
         TaskDto returnedTaskDto = taskService.addTask(dto, connectedUser);
         return ResponseEntity.status(HttpStatus.CREATED).body(returnedTaskDto);
     }
 
     @PutMapping("/task")
     public ResponseEntity<TaskDto> editTask(@RequestHeader(HttpHeaders.AUTHORIZATION) String headerAuth, @RequestBody TaskDto taskDto) throws Exception {
-        System.out.println(taskDto);
         AppUserDto connectedUser = appUserService.getConnectedUser(headerAuth);
-        System.out.println(connectedUser);
         if (taskService.isSharedWithAppUser(taskDto, connectedUser)) {
             TaskDto returnedTaskDto = taskService.updateTask(taskDto);
             return new ResponseEntity<>(returnedTaskDto, HttpStatus.OK);
@@ -75,10 +71,8 @@ public class TaskController {
 
     @DeleteMapping("/task/{id}")
     public ResponseEntity<HttpStatus> deleteTask(@RequestHeader(HttpHeaders.AUTHORIZATION) String headerAuth, @PathVariable("id") long taskID) throws Exception {
-        System.out.println(taskID);
         TaskDto taskDto = taskService.fetchById(taskID);
         AppUserDto connectedUser = appUserService.getConnectedUser(headerAuth);
-        System.out.println(connectedUser);
         if (taskService.isSharedWithAppUser(taskDto, connectedUser)) {
             try {
                 if (taskDto.getOwnerEmail().equals(connectedUser.getEmail())) {
@@ -98,27 +92,13 @@ public class TaskController {
     @PutMapping("/task/share")
     public ResponseEntity<TaskDto> shareTask(@RequestHeader(HttpHeaders.AUTHORIZATION) String headerAuth,
                                              @RequestBody ShareRequest shareRequestBody) throws Exception {
-
-        System.out.println("\nTache à partager :");
         TaskDto taskDto = taskService.fetchById(shareRequestBody.getTaskId());
-        System.out.println(taskDto);
-
         AppUserDto connectedUser = appUserService.getConnectedUser(headerAuth);
-        System.out.println("Utilisateur connecté :");
-        System.out.println(connectedUser);
-
-        System.out.println("Mail reçu :");
-        System.out.println(shareRequestBody.getAppUserToShareEmail());
-
         if (taskService.isSharedWithAppUser(taskDto, connectedUser)) {
             try {
                 if (appUserService.existsByEmail(shareRequestBody.getAppUserToShareEmail())) {
                     AppUser appUserToShare = appUserService.fetchByEmail(shareRequestBody.getAppUserToShareEmail());
-                    System.out.println("Utilisateur à qui partager :");
-                    System.out.println(appUserToShare);
-
                     taskService.shareTaskToUser(taskDto, new AppUserDto(appUserToShare));
-
                     return new ResponseEntity<>(HttpStatus.OK);
                 } else {
                     return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -140,7 +120,6 @@ public class TaskController {
         if (optTask.isPresent()) {
             TaskDto task = optTask.get();
             if(taskService.isSharedWithAppUser(task, connectedUser)) {
-                System.out.printf("\nOn veut la liste des utilisateurs qui ont eu les droits sur la tâche n°%d.\n", id);
                 List<String> appUsersWhoTaskIsSharedWith = taskService.getEmailsOfAppUsersWhoTaskIsSharedWith(task);
                 return new ResponseEntity<>(appUsersWhoTaskIsSharedWith, HttpStatus.OK);
             } else {
@@ -151,23 +130,14 @@ public class TaskController {
         }
     }
 
-    @DeleteMapping("/task/share") // todo
+    @DeleteMapping("/task/share")
     public ResponseEntity<HttpStatus> unshareThisTaskWithAppUser(@RequestHeader(HttpHeaders.AUTHORIZATION) String headerAuth,
                                                                  @RequestBody ShareRequest shareRequestBody) throws Exception {
-        System.out.printf("\nOn veut supprimer les droits d'accès éventuels de un utilisateur donné de la tâche %d.\n",
-                shareRequestBody.getTaskId());
-
-        System.out.println("L'utilisateur connecté est :");
         TaskDto taskDto = taskService.fetchById(shareRequestBody.getTaskId());
         AppUserDto connectedUser = appUserService.getConnectedUser(headerAuth);
-        System.out.println(connectedUser);
-
         if (taskService.isPropertyOfAppUser(taskDto, connectedUser)) {
             try {
-                System.out.println("IS OK. Maintenant on veut : l'association précise entre les 2 éléments de la shareRequest.");
                 AppUser appUserToUnshare = appUserService.fetchByEmail(shareRequestBody.getAppUserToShareEmail());
-                System.out.println("Utilisateur à qui départager :");
-                System.out.println(appUserToUnshare);
                 userTaskAssociationService.delete(appUserToUnshare, taskDto);
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             } catch (Exception e) {
@@ -178,21 +148,13 @@ public class TaskController {
         }
     }
 
-    @DeleteMapping("/task/share/allUsers") // todo
+    @DeleteMapping("/task/share/allUsers")
     public ResponseEntity<HttpStatus> unshareTaskWithAllAppUsers(@RequestHeader(HttpHeaders.AUTHORIZATION) String headerAuth,
                                                                  @RequestBody ShareRequest shareRequestBody) throws Exception {
-        System.out.printf("\nOn veut supprimer les droits d'accès éventuels de tous les utilisateurs la tâche %d.\n",
-                shareRequestBody.getTaskId());
-
-        System.out.println("L'utilisateur connecté est :");
         TaskDto taskDto = taskService.fetchById(shareRequestBody.getTaskId());
         AppUserDto connectedUser = appUserService.getConnectedUser(headerAuth);
-        System.out.println(connectedUser);
-
-
         if (taskService.isPropertyOfAppUser(taskDto, connectedUser)) {
             try {
-                System.out.println("IS OK. Maintenant on veut : supprimer toutes les associations, puis recréer l'association.");
                 userTaskAssociationService.deleteAllNonOwnerUserOfThisTask(taskDto);
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             } catch (Exception e) {
@@ -203,22 +165,14 @@ public class TaskController {
         }
     }
 
-    @DeleteMapping("/task/share/allTasks") // todo
+    @DeleteMapping("/task/share/allTasks")
     public ResponseEntity<HttpStatus> unshareAllTasksWithAppUser(@RequestHeader(HttpHeaders.AUTHORIZATION) String headerAuth,
                                                                  @RequestBody ShareRequest shareRequestBody) throws Exception {
-        System.out.println("\nOn veut supprimer les droits d'accès éventuels d'un utilisateur à toutes les tâches de l'utilisateur connecté.");
-
-        System.out.println("L'utilisateur connecté est :");
         TaskDto taskDto = taskService.fetchById(shareRequestBody.getTaskId());
         AppUserDto connectedUser = appUserService.getConnectedUser(headerAuth);
-        System.out.println(connectedUser);
-
         if (taskService.isPropertyOfAppUser(taskDto, connectedUser)) {
             try {
-                System.out.println("IS OK. Maintenant on veut : trouver toutes les associations de l'utilisateur connecté avec ");
                 AppUser appUserToUnshare = appUserService.fetchByEmail(shareRequestBody.getAppUserToShareEmail());
-                System.out.println("Utilisateur à qui départager :");
-                System.out.println(appUserToUnshare);
                 userTaskAssociationService.deleteAllOwnedByUser1TasksOfUser2(connectedUser, appUserToUnshare);
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             } catch (Exception e) {
@@ -229,22 +183,14 @@ public class TaskController {
         }
     }
 
-    @PutMapping("/task/share/allTasks") // todo
+    @PutMapping("/task/share/allTasks")
     public ResponseEntity<HttpStatus> shareAllTasksWithAppUser(@RequestHeader(HttpHeaders.AUTHORIZATION) String headerAuth,
                                                                  @RequestBody ShareRequest shareRequestBody) throws Exception {
-        System.out.println("\nOn veut autoriser l'accès d'un utilisateur à toutes les tâches.");
-
-        System.out.println("L'utilisateur connecté est :");
         TaskDto taskDto = taskService.fetchById(shareRequestBody.getTaskId());
         AppUserDto connectedUser = appUserService.getConnectedUser(headerAuth);
-        System.out.println(connectedUser);
-
         if (taskService.isPropertyOfAppUser(taskDto, connectedUser)) {
             try {
-                System.out.println("IS OK. Maintenant on veut : créer les associations de toutes les tâches de l'utilisateur connecté avec ");
                 AppUser appUserToShare = appUserService.fetchByEmail(shareRequestBody.getAppUserToShareEmail());
-                System.out.println("Utilisateur à qui partager :");
-                System.out.println(appUserToShare);
                 userTaskAssociationService.associateAllTasksOwnedByUser1ToUser2(connectedUser, appUserToShare);
                 return new ResponseEntity<>(HttpStatus.OK);
             } catch (Exception e) {

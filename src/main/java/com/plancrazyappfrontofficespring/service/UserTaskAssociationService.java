@@ -31,10 +31,6 @@ public class UserTaskAssociationService {
     @Transactional
     public void delete(AppUser appUserToUnshare, TaskDto taskDto) throws Exception {
         Task taskToDelete = taskRepository.findById(taskDto.getTaskId()).orElseThrow(() -> new Exception());
-        System.out.println("La fonction delete reçoit l'ordre de supprimer la tâche : ");
-        System.out.println(taskToDelete);
-        System.out.println("Pour l'utilisateur : ");
-        System.out.println(appUserToUnshare);
         userTaskAssociationRepository.deleteByTaskAndAppUser(
                 taskToDelete,
                 appUserToUnshare
