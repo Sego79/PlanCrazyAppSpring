@@ -2,21 +2,21 @@ package com.plancrazyappfrontofficespring.security.jwt;
 
 public class JwtResponse {
 
-    private String nickname;
+    private String email;
 
     private String token;
 
-    public JwtResponse(String nickname, String token) {
-        this.nickname = nickname;
+    public JwtResponse(String email, String token) {
+        this.email = email;
         this.token = token;
     }
 
-    public String getNickname() {
-        return nickname;
+    public String getEmail() {
+        return email;
     }
 
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getToken() {
