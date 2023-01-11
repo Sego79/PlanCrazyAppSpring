@@ -1,8 +1,11 @@
 package com.plancrazyappfrontofficespring.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,13 +29,13 @@ public class Task {
     private LocalDate startingDate;
 
     @Column(name="starting_hour", nullable = false)
-    private LocalDate startingHour;
+    private LocalTime startingHour;
 
     @Column(name="ending_date", nullable = false)
     private LocalDate endingDate;
 
     @Column(name="ending_hour", nullable = false)
-    private LocalDate endingHour;
+    private LocalTime endingHour;
 
     @Column(name="is_Private", nullable = false)
     private Boolean isPrivate;
@@ -48,6 +51,17 @@ public class Task {
 
     public Task() {
 
+    }
+
+    public Task(String taskTitle, String description, String location, LocalDate startingDate, LocalTime startingHour, LocalDate endingDate, LocalTime endingHour, Boolean isPrivate) {
+        this.taskTitle = taskTitle;
+        this.description = description;
+        this.location = location;
+        this.startingDate = startingDate;
+        this.startingHour = startingHour;
+        this.endingDate = endingDate;
+        this.endingHour = endingHour;
+        this.isPrivate = isPrivate;
     }
 
     public Long getTaskId() {
@@ -90,11 +104,11 @@ public class Task {
         this.startingDate = startingDate;
     }
 
-    public LocalDate getStartingHour() {
+    public LocalTime getStartingHour() {
         return startingHour;
     }
 
-    public void setStartingHour(LocalDate startingHour) {
+    public void setStartingHour(LocalTime startingHour) {
         this.startingHour = startingHour;
     }
 
@@ -106,11 +120,11 @@ public class Task {
         this.endingDate = endingDate;
     }
 
-    public LocalDate getEndingHour() {
+    public LocalTime getEndingHour() {
         return endingHour;
     }
 
-    public void setEndingHour(LocalDate endingHour) {
+    public void setEndingHour(LocalTime endingHour) {
         this.endingHour = endingHour;
     }
 

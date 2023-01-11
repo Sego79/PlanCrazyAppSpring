@@ -24,32 +24,20 @@ public class AppUserDto {
 
     private String password;
 
-//    private Boolean isActive = true;
-//
-//    private Boolean isAdmin = false;
-//
-//    private Boolean isSuperAdmin = false;
-//
-//    private List<Picture> pictureList = new ArrayList<>();
-//
-//    private List<UserTaskAssociation> UserTaskAssociationList = new ArrayList<>();
-
     public AppUserDto() {
     }
 
-    public static AppUserDto transformIntoDto(AppUser g) {
-        AppUserDto dto = new AppUserDto();
-        dto.setAppUserId(g.getAppUserId());
-        dto.setNickname(g.getNickname());
-        dto.setFirstName(g.getFirstName());
-        dto.setLastName(g.getLastName());
-        dto.setAddress(g.getAddress());
-        dto.setPostcode(g.getPostcode());
-        dto.setCity(g.getCity());
-        dto.setPhoneNumber(g.getPhoneNumber());
-        dto.setEmail(g.getEmail());
-        dto.setPassword(g.getPassword());
-        return dto;
+    public AppUserDto(AppUser appUser) {
+        this.setAppUserId(appUser.getAppUserId());
+        this.setNickname(appUser.getNickname());
+        this.setFirstName(appUser.getFirstName());
+        this.setLastName(appUser.getLastName());
+        this.setAddress(appUser.getAddress());
+        this.setPostcode(appUser.getPostcode());
+        this.setCity(appUser.getCity());
+        this.setPhoneNumber(appUser.getPhoneNumber());
+        this.setEmail(appUser.getEmail());
+        this.setPassword(appUser.getPassword());
     }
 
     public Long getAppUserId() {
@@ -130,5 +118,21 @@ public class AppUserDto {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    @Override
+    public String toString() {
+        return "AppUserDto{" +
+                "appUserId=" + appUserId +
+                ", nickname='" + nickname + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", address='" + address + '\'' +
+                ", postcode=" + postcode +
+                ", city='" + city + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                '}';
     }
 }

@@ -1,26 +1,31 @@
 package com.plancrazyappfrontofficespring.model;
 
 import jakarta.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "app_user")
-public class AppUser {
+public class AppUser implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="app_user_id", nullable = false, unique = true)
+    @Column(name = "app_user_id", nullable = false, unique = true)
     private Long appUserId;
 
     @Column(nullable = false, unique = true)
     private String nickname;
 
-    @Column(name="first_name")
+    @Column(name = "first_name")
     private String firstName;
 
-    @Column(name="last_name")
+    @Column(name = "last_name")
     private String lastName;
 
     private String address;
@@ -29,7 +34,7 @@ public class AppUser {
 
     private String city;
 
-    @Column(name="phone_number", nullable = false, unique = true)
+    @Column(name = "phone_number", nullable = false, unique = true)
     private String phoneNumber;
 
     @Column(nullable = false, unique = true)
@@ -41,11 +46,8 @@ public class AppUser {
     @Column(name = "is_active", nullable = false)
     private Boolean isActive = true;
 
-    @Column(name = "is_admin", nullable = false)
-    private Boolean isAdmin = false;
-
-    @Column(name = "is_super_admin", nullable = false)
-    private Boolean isSuperAdmin = false;
+    @ManyToMany(fetch = FetchType.EAGER)
+    private List<Role> roleList;
 
     @OneToMany
     private List<Picture> pictureList = new ArrayList<>();
@@ -55,34 +57,6 @@ public class AppUser {
 
     public AppUser() {
 
-    }
-
-    public AppUser(String nickname, String firstName, String lastName, String address, Integer postcode, String city, String phoneNumber, String email, String password, Boolean isAdmin) {
-        this.nickname = nickname;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.address = address;
-        this.postcode = postcode;
-        this.city = city;
-        this.phoneNumber = phoneNumber;
-        this.email = email;
-        this.password = password;
-        this.isAdmin = isAdmin;
-    }
-
-    public AppUser(Long appUserId, String nickname, String firstName, String lastName, String address, Integer postcode, String city, String phoneNumber, String email, String password, Boolean isActive, Boolean isAdmin) {
-        this.appUserId = appUserId;
-        this.nickname = nickname;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.address = address;
-        this.postcode = postcode;
-        this.city = city;
-        this.phoneNumber = phoneNumber;
-        this.email = email;
-        this.password = password;
-        this.isActive = isActive;
-        this.isAdmin = isAdmin;
     }
 
     public AppUser(String nickname, String firstName, String lastName, String address, Integer postcode, String city, String phoneNumber, String email, String password) {
@@ -95,6 +69,76 @@ public class AppUser {
         this.phoneNumber = phoneNumber;
         this.email = email;
         this.password = password;
+    }
+
+    public AppUser(Long appUserId, String nickname, String firstName, String lastName, String address, Integer postcode, String city, String phoneNumber, String email, String password, Boolean isActive) {
+        this.appUserId = appUserId;
+        this.nickname = nickname;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.address = address;
+        this.postcode = postcode;
+        this.city = city;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+        this.password = password;
+        this.isActive = isActive;
+    }
+
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return this.roleList
+                .stream()
+                .map(role -> new SimpleGrantedAuthority(role.getName().name()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return this.isActive;
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public String toString() {
+        return "AppUser{" +
+                "appUserId=" + appUserId +
+                ", nickname='" + nickname + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", address='" + address + '\'' +
+                ", postcode=" + postcode +
+                ", city='" + city + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", roleList=" + roleList +
+                '}';
     }
 
     public Long getAppUserId() {
@@ -165,40 +209,28 @@ public class AppUser {
         return email;
     }
 
-    public String getPassword() {
-        return password;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public void setPassword(String password) {
         this.password = password;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public Boolean getIsActive() {
+    public Boolean getActive() {
         return isActive;
     }
 
-    public void setIsActive(Boolean active) {
+    public void setActive(Boolean active) {
         isActive = active;
     }
 
-    public Boolean getIsAdmin() {
-        return isAdmin;
+    public List<Role> getRoleList() {
+        return roleList;
     }
 
-    public void setIsAdmin(Boolean admin) {
-        isAdmin = admin;
-    }
-
-    public Boolean getIsSuperAdmin() {
-        return isSuperAdmin;
-    }
-
-    public void setIsSuperAdmin(Boolean superAdmin) {
-        isSuperAdmin = superAdmin;
+    public void setRoleList(List<Role> roleList) {
+        this.roleList = roleList;
     }
 
     public List<Picture> getPictureList() {
@@ -215,21 +247,5 @@ public class AppUser {
 
     public void setUserTaskAssociationList(List<UserTaskAssociation> userTaskAssociationList) {
         UserTaskAssociationList = userTaskAssociationList;
-    }
-
-    @Override
-    public String toString() {
-        return "AppUser{" +
-                "nickname='" + nickname + '\'' +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", address='" + address + '\'' +
-                ", postcode=" + postcode +
-                ", city='" + city + '\'' +
-                ", phoneNumber='" + phoneNumber + '\'' +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                ", isAdmin=" + isAdmin +
-                '}';
     }
 }
