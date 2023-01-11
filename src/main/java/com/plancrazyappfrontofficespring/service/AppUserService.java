@@ -1,12 +1,19 @@
 package com.plancrazyappfrontofficespring.service;
 
 import com.plancrazyappfrontofficespring.controller.dto.AppUserDto;
+import com.plancrazyappfrontofficespring.model.exception.UserAlreadyExistException;
 import com.plancrazyappfrontofficespring.model.AppUser;
+import com.plancrazyappfrontofficespring.model.Role;
+import com.plancrazyappfrontofficespring.model.RoleEnum;
 import com.plancrazyappfrontofficespring.repository.AppUserRepository;
+import com.plancrazyappfrontofficespring.repository.RoleRepository;
+import com.plancrazyappfrontofficespring.security.jwt.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -16,6 +23,13 @@ public class AppUserService {
 
     @Autowired
     private AppUserRepository appUserRepository;
+    @Autowired
+    private RoleRepository roleRepository;
+    @Autowired
+    private PasswordEncoder encoder;
+    @Autowired
+    private JwtUtils jwtUtils;
+
 
     public List<AppUserDto> fetchAppUser() {
         List<AppUser> appUserList = appUserRepository.findAll();
@@ -25,29 +39,39 @@ public class AppUserService {
     }
 
     public AppUser fetchById(Long id) throws Exception {
-            Optional<AppUser> appUserOpt = appUserRepository.findById(id);
-            return appUserOpt.orElseThrow(() -> new Exception());
+        Optional<AppUser> appUserOpt = appUserRepository.findById(id);
+        return appUserOpt.orElseThrow(() -> new Exception());
+    }
+
+    public AppUser fetchByEmail(String email) throws Exception {
+        Optional<AppUser> appUserOpt = appUserRepository.findUserByEmail(email);
+        return appUserOpt.orElseThrow(() -> new Exception());
     }
 
     @Transactional
-    public AppUserDto addAppUser(AppUserDto dto){
-        AppUser appUser =  new AppUser(
-                dto.getNickname(),
-                dto.getFirstName(),
-                dto.getLastName(),
-                dto.getAddress(),
-                dto.getPostcode(),
-                dto.getCity(),
-                dto.getPhoneNumber(),
-                dto.getEmail(),
-                dto.getPassword()
-        );
+    public AppUserDto addAppUser(AppUserDto dto) throws UserAlreadyExistException {
+        boolean alreadyExist = appUserRepository.existsByEmail(dto.getEmail());
+        if (alreadyExist) {
+            throw new UserAlreadyExistException(dto.getEmail());
+        } else {
+            AppUser appUser = new AppUser(
+                    dto.getNickname(),
+                    dto.getFirstName(),
+                    dto.getLastName(),
+                    dto.getAddress(),
+                    dto.getPostcode(),
+                    dto.getCity(),
+                    dto.getPhoneNumber(),
+                    dto.getEmail(),
+                    encoder.encode(dto.getPassword())
+            );
 
-        appUser.setIsActive(true);
-        appUser.setIsAdmin(false);
-        appUser.setIsSuperAdmin(false);
-        appUserRepository.save(appUser);
-        return new AppUserDto(appUser);
+            appUser.setActive(true);
+            Role roleUser = roleRepository.findByName(RoleEnum.ROLE_USER);
+            appUser.setRoleList(Arrays.asList(roleUser));
+            appUserRepository.save(appUser);
+            return new AppUserDto(appUser);
+        }
     }
 
     @Transactional
@@ -55,7 +79,7 @@ public class AppUserService {
 
         Optional<AppUser> appUserToUpdate = appUserRepository.findById(appUserDto.getAppUserId());
 
-        if(appUserToUpdate.isPresent()) {
+        if (appUserToUpdate.isPresent()) {
             AppUser updateAppUserTemp = appUserToUpdate.get();
             updateAppUserTemp.setAppUserId(appUserDto.getAppUserId());
             updateAppUserTemp.setNickname(appUserDto.getNickname());
@@ -76,7 +100,17 @@ public class AppUserService {
     }
 
     @Transactional
-    public void delete(Long id){
-        appUserRepository.deleteById(id);
+    public void delete(String email) {
+        appUserRepository.deleteByEmail(email);
+    }
+
+    public AppUserDto getConnectedUser(String headerAuth) throws Exception {
+        String email = jwtUtils.getEmailFromToken(jwtUtils.parseStringHeaderAuthorization(headerAuth));
+        AppUserDto connectedUser = new AppUserDto(fetchByEmail(email));
+        return connectedUser;
+    }
+
+    public boolean existsByEmail(String email) {
+        return appUserRepository.existsByEmail(email);
     }
 }

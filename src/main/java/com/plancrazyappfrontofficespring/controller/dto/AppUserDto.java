@@ -119,4 +119,20 @@ public class AppUserDto {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    @Override
+    public String toString() {
+        return "AppUserDto{" +
+                "appUserId=" + appUserId +
+                ", nickname='" + nickname + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", address='" + address + '\'' +
+                ", postcode=" + postcode +
+                ", city='" + city + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                '}';
+    }
 }

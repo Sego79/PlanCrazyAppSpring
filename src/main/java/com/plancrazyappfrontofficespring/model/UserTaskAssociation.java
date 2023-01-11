@@ -9,6 +9,8 @@ public class UserTaskAssociation {
     @Column(name="user_task_association_id", nullable = false, unique = true)
     private Long userTaskAssociationId;
 
+    private boolean owner;
+
     @ManyToOne
     @JoinColumn(name = "app_user_id")
     AppUser appUser;
@@ -19,6 +21,12 @@ public class UserTaskAssociation {
 
     public UserTaskAssociation() {
 
+    }
+
+    public UserTaskAssociation(AppUser appUser, Task task, boolean owner) {
+        this.appUser = appUser;
+        this.task = task;
+        this.owner = owner;
     }
 
     public Long getUserTaskAssociationId() {
@@ -43,5 +51,13 @@ public class UserTaskAssociation {
 
     public void setTask(Task task) {
         this.task = task;
+    }
+
+    public boolean isOwner() {
+        return owner;
+    }
+
+    public void setOwner(boolean owner) {
+        this.owner = owner;
     }
 }

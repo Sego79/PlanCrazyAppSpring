@@ -25,6 +25,8 @@ public class TaskDto {
 
     private Boolean isPrivate;
 
+    private String ownerEmail;
+
     public TaskDto() {
     }
 
@@ -110,5 +112,28 @@ public class TaskDto {
 
     public void setPrivate(Boolean aPrivate) {
         isPrivate = aPrivate;
+    }
+
+    public String getOwnerEmail() {
+        return ownerEmail;
+    }
+
+    public void setOwnerEmail(String ownerEmail) {
+        this.ownerEmail = ownerEmail;
+    }
+
+    @Override
+    public String toString() {
+        return "TaskDto{" +
+                "taskId=" + taskId +
+                ", taskTitle='" + taskTitle + '\'' +
+                ", description='" + description + '\'' +
+                ", location='" + location + '\'' +
+                ", startingDate=" + startingDate +
+                ", startingHour=" + startingHour +
+                ", endingDate=" + endingDate +
+                ", endingHour=" + endingHour +
+                ", isPrivate=" + isPrivate +
+                '}';
     }
 }
