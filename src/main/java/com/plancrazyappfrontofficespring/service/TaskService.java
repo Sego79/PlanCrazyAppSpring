@@ -171,6 +171,7 @@ public class TaskService {
     public List<String> getEmailsOfAppUsersWhoTaskIsSharedWith(TaskDto task) {
         return taskRepository.findById(task.getTaskId()).get().getAssociationList().stream()
                 .map(asso -> asso.getUser().getEmail())
+                .distinct()
                 .collect(Collectors.toList());
     }
 }
