@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -142,8 +143,8 @@ public class TaskService {
 
     public boolean isSharedWithAppUser(TaskDto task, AppUserDto connectedUser) {
         return userTaskAssociationRepository.findAll().stream()
-                .filter(userTaskAssociation -> userTaskAssociation.getTask().getTaskId() == task.getTaskId())
-                .anyMatch(userTaskAssociation -> userTaskAssociation.getUser().getAppUserId() == connectedUser.getAppUserId());
+                .filter(userTaskAssociation -> Objects.equals(userTaskAssociation.getTask().getTaskId(), task.getTaskId()))
+                .anyMatch(userTaskAssociation -> Objects.equals(userTaskAssociation.getUser().getAppUserId(), connectedUser.getAppUserId()));
     }
 
     public boolean isPropertyOfAppUser(TaskDto taskDto, AppUserDto connectedUser) throws Exception {
@@ -168,8 +169,8 @@ public class TaskService {
 
     }
 
-    public List<String> getEmailsOfAppUsersWhoTaskIsSharedWith(TaskDto task) {
-        return taskRepository.findById(task.getTaskId()).get().getAssociationList().stream()
+    public List<String> getEmailsOfAppUsersWhoTaskIsSharedWith(TaskDto task) throws Exception {
+        return taskRepository.findById(task.getTaskId()).orElseThrow(Exception::new).getAssociationList().stream()
                 .map(asso -> asso.getUser().getEmail())
                 .distinct()
                 .collect(Collectors.toList());

@@ -54,5 +54,6 @@ class UserTaskAssociationRepositoryTest {
 
         // then
         assertThat(result.getUser()).isEqualTo(appUser1);
+        assertThat(result.getTask()).isEqualTo(task1);
     }
 }

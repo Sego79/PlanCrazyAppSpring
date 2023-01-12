@@ -121,17 +121,6 @@ public class TaskController {
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-//        if (optTask.isPresent()) {
-//            TaskDto task = optTask.get();
-//            if (taskService.isSharedWithAppUser(task, connectedUser)) {
-//                List<String> appUsersWhoTaskIsSharedWith = taskService.getEmailsOfAppUsersWhoTaskIsSharedWith(task);
-//                return new ResponseEntity<>(appUsersWhoTaskIsSharedWith, HttpStatus.OK);
-//            } else {
-//                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-//            }
-//        } else { //todo : gérer cas id not found
-//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//        }
     }
 
     @GetMapping("/task/share/{id}")
@@ -147,7 +136,7 @@ public class TaskController {
             } else {
                 return new ResponseEntity<>(HttpStatus.FORBIDDEN);
             }
-        } else { //todo : gérer cas id not found
+        } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
