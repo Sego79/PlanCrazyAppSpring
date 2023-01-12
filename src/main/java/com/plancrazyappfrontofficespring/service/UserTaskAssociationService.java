@@ -12,6 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class UserTaskAssociationService {
 
@@ -75,5 +78,21 @@ public class UserTaskAssociationService {
                         throw new RuntimeException(e);
                     }
                 });
+    }
+
+    public List<String> findAllUsersEmailsThisUserHadSharedTasksWith(AppUserDto appUserDto) throws Exception {
+        AppUser appUser = appUserRepository.findUserByEmail(appUserDto.getEmail()).orElseThrow(() -> new Exception());
+        List<Task> tasksPropertyOfAppUser = appUser.getUserTaskAssociationList().stream()
+                .filter(userTaskAssociation -> userTaskAssociation.isOwner())
+                .map(asso -> asso.getTask())
+                .collect(Collectors.toList());
+        List<UserTaskAssociation> associationBetweenTasksPropertyOfAppUserAndOtherUsers = tasksPropertyOfAppUser.stream()
+                .flatMap(task -> task.getAssociationList().stream())
+                .filter(asso -> !asso.isOwner())
+                .collect(Collectors.toList());
+        return associationBetweenTasksPropertyOfAppUserAndOtherUsers.stream()
+                .map(asso -> asso.getUser().getEmail())
+                .distinct()
+                .collect(Collectors.toList());
     }
 }
