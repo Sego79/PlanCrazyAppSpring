@@ -112,6 +112,28 @@ public class TaskController {
         }
     }
 
+    @GetMapping("/task/share")
+    public ResponseEntity<List<String>> getSharedUsersEmails(@RequestHeader(HttpHeaders.AUTHORIZATION) String headerAuth) throws Exception {
+        AppUserDto connectedUser = appUserService.getConnectedUser(headerAuth);
+        try {
+            List<String> allUsersEmailsThisUserHadSharedTasksWith = userTaskAssociationService.findAllUsersEmailsThisUserHadSharedTasksWith(connectedUser);
+            return new ResponseEntity<>(allUsersEmailsThisUserHadSharedTasksWith, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+//        if (optTask.isPresent()) {
+//            TaskDto task = optTask.get();
+//            if (taskService.isSharedWithAppUser(task, connectedUser)) {
+//                List<String> appUsersWhoTaskIsSharedWith = taskService.getEmailsOfAppUsersWhoTaskIsSharedWith(task);
+//                return new ResponseEntity<>(appUsersWhoTaskIsSharedWith, HttpStatus.OK);
+//            } else {
+//                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+//            }
+//        } else { //todo : gérer cas id not found
+//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//        }
+    }
+
     @GetMapping("/task/share/{id}")
     public ResponseEntity<List<String>> getSharedUsersEmailsOfTaskByTaskId(@RequestHeader(HttpHeaders.AUTHORIZATION) String headerAuth,
                                                                            @PathVariable("id") long id) throws Exception {
