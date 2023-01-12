@@ -55,6 +55,8 @@ public class AppUser implements UserDetails {
     @OneToMany(mappedBy = "appUser", fetch = FetchType.EAGER)
     private List<UserTaskAssociation> UserTaskAssociationList = new ArrayList<>();
 
+    private boolean isAdmin;
+
     public AppUser() {
 
     }
@@ -69,6 +71,7 @@ public class AppUser implements UserDetails {
         this.phoneNumber = phoneNumber;
         this.email = email;
         this.password = password;
+        this.isAdmin = false;
     }
 
     public AppUser(Long appUserId, String nickname, String firstName, String lastName, String address, Integer postcode, String city, String phoneNumber, String email, String password, Boolean isActive) {
@@ -83,6 +86,7 @@ public class AppUser implements UserDetails {
         this.email = email;
         this.password = password;
         this.isActive = isActive;
+        this.isAdmin = false;
     }
 
 
@@ -247,5 +251,13 @@ public class AppUser implements UserDetails {
 
     public void setUserTaskAssociationList(List<UserTaskAssociation> userTaskAssociationList) {
         UserTaskAssociationList = userTaskAssociationList;
+    }
+
+    public boolean isAdmin() {
+        return isAdmin;
+    }
+
+    public void setAdmin(boolean admin) {
+        isAdmin = admin;
     }
 }
